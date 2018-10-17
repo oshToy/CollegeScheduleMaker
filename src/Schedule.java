@@ -1,11 +1,14 @@
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
 public class Schedule implements IDay {
 	
 	private ArrayList <Course> courseOfSchedule;//only one show courses 
+	
 	public Schedule(){
 		courseOfSchedule=new ArrayList <Course>();
+		
 	}
 	//public void addCourseToSchedule(int id ,String name,int numOfShows,int numberOfSlots,Day day,int startingTime, int endingTime, int numberOfRoom, String nameOfLect) throws Exception{
 	public void addCourseToSchedule(Course wantedCourse,int wantedShow) {
@@ -39,5 +42,7 @@ public class Schedule implements IDay {
 								}
 		return true;
 	}
+
+
 	
 }

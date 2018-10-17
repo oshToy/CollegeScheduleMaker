@@ -219,6 +219,8 @@ public class Main extends Application{
 			e.printStackTrace();
 		}
 		 */
+
+		
 		launch(args); 
 	}
 	@Override
@@ -226,6 +228,15 @@ public class Main extends Application{
 		ScheduleJFX app=new ScheduleJFX( primaryStage);
 		 
 		
+	}
+	public static Controller createController(ScheduleJFX viewer){
+		Model model = new Model();
+		Controller controller = new Controller(model);
+		controller.addViewer(viewer);
+		
+		
+		
+		return controller;
 	}
 	
 }
