@@ -1,8 +1,12 @@
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AllCourses {
 	private  ArrayList <Course> arrayOfCourse;
+	private Map  <Integer,Course> mapOfCourse=new HashMap <Integer,Course>();
+	
 	public AllCourses(){
 		this.arrayOfCourse=new ArrayList <Course>();
 	}
@@ -32,7 +36,7 @@ public class AllCourses {
 		return wantedCourse;
 	}
 	public void addShow(int courseId,int numOfShow,int amountOfSlots) throws Exception{
-		Show show = new Show(amountOfSlots);
+		Show show = new Show();
 		Course wantedCourse = getCourseById(courseId);
 		wantedCourse.getShows()[numOfShow]=show;
 	}
@@ -48,7 +52,7 @@ public class AllCourses {
 			throw new Exception("Teacher teaching those hours");  
 		}
 		Course wantedCourse = getCourseById(courseId);
-		wantedCourse.getShows()[numOfShow].getSlots()[numOfSlot]=newSlot;
+		wantedCourse.getShows()[numOfShow].getSlots().add(newSlot);
 	}
 	public static boolean ligitSlotByTeacher(Slot newSlot, ArrayList<Course> arrayOfCourse) {
 		for (Course course : arrayOfCourse) {

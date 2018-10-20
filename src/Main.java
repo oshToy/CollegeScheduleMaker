@@ -7,6 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Main extends Application{
+	/*
 	public static Scanner s = new Scanner(System.in);//static object
 	
 	public static void addCourse(ArrayList <Course> arrayOfCourse){
@@ -111,6 +112,7 @@ public class Main extends Application{
 		}
 		return true;
 	}
+	*/
 	public static void main(String[] args) throws StartingTimeException, EndingTimeException {
 		/*
 		 ArrayList <Course> arrayOfCourse=new  ArrayList <Course>();
@@ -126,8 +128,8 @@ public class Main extends Application{
 			
 			 }
 		 }
-		 *\
-		 /*
+		 
+		 
 		 Course course=new Course(1,"algebra",2);
 		 arrayOfCourse.add(course);
 		 Show showOne=new Show(2);
@@ -168,8 +170,7 @@ public class Main extends Application{
 		 loz.addCourseToSchedule(arrayOfCourse, 0, 1);
 		 System.out.println(loz.getCourseOfSchedule());
 		 System.out.println(loz.timeValidSlots(arrayOfCourse, 1, 0));
-		 */	
-		/* 
+
 		 AllCourses allCourses=new AllCourses();
 		 try {
 			allCourses.addCourse(1,"algebra",2);

@@ -30,10 +30,10 @@ public class Schedule implements IDay {
 	public boolean timeValidSlots(Course wantedCourse,int wantedShow){
 		int numOfSlots=wantedCourse.getShows()[wantedShow].getNumberOfSlots();
 		for (int  i = 0; i < numOfSlots; i++) {//check all slots of new show
-			Slot newSlot=wantedCourse.getShows()[wantedShow].getSlots()[i];//new slot
+			Slot newSlot=wantedCourse.getShows()[wantedShow].getSlots().get(i);//new slot
 			for (int  j = 0; j < courseOfSchedule.size(); j++) {//check all exists courses - with one show only
 				for (int  k = 0; k < courseOfSchedule.get(j).getShows()[0].getNumberOfSlots(); k++) {//chack all exists slots 
-					Slot existSlot=courseOfSchedule.get(j).getShows()[0].getSlots()[k];
+					Slot existSlot=courseOfSchedule.get(j).getShows()[0].getSlots().get(k);
 					if(newSlot!=null&&existSlot!=null&&newSlot.noMatchingHours(existSlot)==false){//TODO clear null condition
 							return false;
 					}
