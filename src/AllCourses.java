@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class AllCourses {
 	private  ArrayList <Course> arrayOfCourse;
-	private Map  <Integer,Course> mapOfCourse=new HashMap <Integer,Course>();
+	private Map  <Integer,Course> mapOfCourse=new HashMap <>();
 	
 	public AllCourses(){
 		this.arrayOfCourse=new ArrayList <Course>();

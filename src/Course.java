@@ -2,15 +2,13 @@ import java.util.Arrays;
 
 public class Course {
 	
-	private int id;
+	private int courseCode;
 	private String name;
-	private int numOfShows;
-	private Show[] shows;
+		private Show[] shows;
 	
 	public Course(int id ,String name,int numOfShows){
-		this.id=id;
+		this.courseCode=id;
 		this.name=name;
-		this.numOfShows=numOfShows;
 		this.shows=new Show[numOfShows];//create numOfShows shows
 	}
 	
@@ -19,7 +17,7 @@ public class Course {
 	}
 
 	public int getId() {
-		return id;
+		return courseCode;
 	}
 
 	public String getName() {
@@ -30,11 +28,8 @@ public class Course {
 		return shows;
 	}
 
-	@Override
-	public String toString() {
-		return "\nCourse [id=" + id + ", name=" + name + ", numOfShows=" + numOfShows + ", shows="
-				+ Arrays.toString(shows) + "]";
-	}
+	
+	
 
 
 }

@@ -1,10 +1,13 @@
 
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,7 +24,7 @@ public class ScheduleJFX implements IView {
 	public static final int NUMBER_OF_INPUTS_PER_COURSE=3;
 	public static final int NUMBER_OF_INPUTS_PER_SHOW=1;
 	public static final int NUMBER_OF_INPUTS_PER_SLOT=5;
-	public static final int DEFAULT_SLOTS_AMOUNT=1;
+	public static final String DEFAULT_SLOTS_AMOUNT="1";
 	//course  input
 	private TextField courseId;
 	private TextField courseName;
@@ -48,7 +51,7 @@ public class ScheduleJFX implements IView {
 	private TextField slotsInputFromTextField[][];
 	private  BorderPane mainPane;
 	
-	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
 	
 	public ScheduleJFX(Stage primaryStage){
 		init();
@@ -64,18 +67,18 @@ public class ScheduleJFX implements IView {
 		registerListener(Main.createController(this));
 		btnMakeCourse.setOnAction(e -> makeCourseButtonAction());
 		btnDoneMakingCourses.setOnAction(e -> doneMakingCoursesButtonAction());
-		btnDoneMakingSingalCourse.setOnAction(e -> doneMakingMakingSingalCourseAction());
+		btnDoneMakingSingalCourse.setOnAction(e -> doneMakingMakingSingalCourseAction(e));
 		btnDoneMakingShow.setOnAction(e -> doneMakingShowAction());
 		btnDoneMakingSlot.setOnAction(e -> doneMakingSlotAction());
 	}
-	private void doneMakingMakingSingalCourseAction() {
+	private void doneMakingMakingSingalCourseAction(Event e) {
 		for (int i = 0; i < listeners.size(); i++) {
-			listeners.get(i).actionPerformed(new java.awt.event.ActionEvent(this, -1, Controller.DONE_CREATE_COURSE));
+			listeners.get(i).handle(new MyActionEvent(this, Controller.DONE_CREATE_COURSE));
 		}
 	}
 	public void makeCourseButtonAction() {
 		for (int i = 0; i < listeners.size(); i++) {
-			listeners.get(i).actionPerformed(new java.awt.event.ActionEvent(this, -1, Controller.CREATE_COURSE));
+			listeners.get(i).handle(new MyActionEvent(this, Controller.CREATE_COURSE));
 		}
 	}
 	public void doneMakingCoursesButtonAction() {
@@ -83,12 +86,12 @@ public class ScheduleJFX implements IView {
 	}
 	public void doneMakingShowAction() {
 		for (int i = 0; i < listeners.size(); i++) {
-			listeners.get(i).actionPerformed(new java.awt.event.ActionEvent(this, -1, Controller.DONE_CREATE_SHOW));
+			listeners.get(i).handle(new MyActionEvent(this, Controller.DONE_CREATE_SHOW));
 		}
 	}
 	public void doneMakingSlotAction() {
 		for (int i = 0; i < listeners.size(); i++) {
-			listeners.get(i).actionPerformed(new java.awt.event.ActionEvent(this, -1, Controller.DONE_CREATE_SLOTS));
+			listeners.get(i).handle(new MyActionEvent(this, Controller.DONE_CREATE_SLOTS));
 		}
 	}
 	@Override
@@ -188,7 +191,7 @@ public class ScheduleJFX implements IView {
 			    );
 		return dayOptions;
 	}
-	public void registerListener(ActionListener listener) {
+	public void registerListener(EventHandler<MyActionEvent> listener) {
 		listeners.add(listener);
 	}
 
