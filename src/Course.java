@@ -1,40 +1,44 @@
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Course {
 	
-	private int id;
+	private int courseCode;
 	private String name;
-	private int numOfShows;
-	private Show[] shows;
+	//private Show[] mapOfShows;
+	private Map  <Integer,Show> mapOfShows;
 	
-	public Course(int id ,String name,int numOfShows){
-		this.id=id;
+	public Course(int courseCode ,String name){
+		this.courseCode=courseCode;
 		this.name=name;
-		this.numOfShows=numOfShows;
-		this.shows=new Show[numOfShows];//create numOfShows shows
+		mapOfShows=new HashMap();
+
 	}
 	
-	public static Course oneShowCourse(int id ,String name){
-		return new Course(id, name, 1);
-	}
-
-	public int getId() {
-		return id;
+	public int getCourseCode() {
+		return courseCode;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Show[] getShows() {
-		return shows;
+	public Map  <Integer,Show> getShows() {
+		return mapOfShows;
+	}
+	public Show getShowByShowCourse(int showCode) {
+		return this.getShows().get(showCode);
+	}
+	public Show getLonleyShow() {
+		if(getShows().size()==1){
+			for (Show show : mapOfShows.values()) {
+				return show;
+			}
+		}
+		return null;
 	}
 
-	@Override
-	public String toString() {
-		return "\nCourse [id=" + id + ", name=" + name + ", numOfShows=" + numOfShows + ", shows="
-				+ Arrays.toString(shows) + "]";
-	}
 
 
 }

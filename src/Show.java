@@ -1,15 +1,22 @@
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class Show {
+	private int showCode;
 	private ArrayList<Slot> slots;
-	public Show(){
+	public Show(int showCode ){
+		this.showCode=showCode;
 		this.slots=new ArrayList<Slot>();
 	}
 
 
 	public ArrayList<Slot> getSlots() {
 		return slots;
+	}
+
+
+	public int getShowCode() {
+		return showCode;
 	}
 
 
