@@ -3,7 +3,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AllCourses {
+<<<<<<< HEAD
 	private Map  <Integer,Course> mapOfCorses;
+=======
+	private  ArrayList <Course> arrayOfCourse;
+	private Map  <Integer,Course> mapOfCourse=new HashMap <>();
+>>>>>>> 13797d4865f7ede8e1f59648fbde7272da06635e
 	
 	public AllCourses(){
 		this.mapOfCorses=new HashMap<>();

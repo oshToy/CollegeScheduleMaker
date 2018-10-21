@@ -1,9 +1,12 @@
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+
 public class Model implements IModel{
 	
-	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+	private ArrayList<EventHandler<MyActionEvent>>listeners = new ArrayList<>();
 	private AllCourses allCourses= new AllCourses();
 	private Schedule schedule= new Schedule();
 
@@ -12,9 +15,12 @@ public class Model implements IModel{
 		
 		
 	}
+	
+	
 	@Override
-	public void registerListener(ActionListener listener) {
-		listeners.add(listener);
+	public void registerListener(EventHandler<MyActionEvent> e) {
+		listeners.add(e);
+		
 	}
 
 }
