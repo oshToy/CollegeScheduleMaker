@@ -1,0 +1,7 @@
+
+
+.errorTextField {
+ 
+    -fx-border-color: #f00;
+    -fx-border-width: 2px;
+}

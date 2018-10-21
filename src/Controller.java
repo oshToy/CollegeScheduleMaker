@@ -1,62 +1,91 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
-import javafx.event.Event;
+
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 
-public class Controller implements EventHandler<MyActionEvent>{
-	//all finals that will references to comands from model and viewers
-	public static final String CREATE_COURSE="Create course";
-	public static final String DONE_CREATE_COURSE="Done create course";
-	public static final String DONE_CREATE_SHOW="Done create show";
-	public static final String DONE_CREATE_SLOTS="Done create slots";
-	
 
+public class Controller implements EventHandler<MyActionEvent> {
+	// all finals that will references to comands from model and viewers
+	public static final String CREATE_COURSE_VIEWER = "button create course invoked";
+	public static final String DONE_CREATE_COURSE_VIEWER = "button Done create course invoked";
+	public static final String DONE_CREATE_SHOW_VIEWER = "button Done create show invoked";
+	public static final String DONE_CREATE_SLOTS_VIEWER = "buttonDone create slots invoked";
+	public static final String DONE_CREATE_COURSE_MODEL = "model done create course";
+	public static final String DONE_CREATE_SLOTS_MODEL = "model done create slots";
+	public static final String COURSE_CODE_ALREADY_EXIST_ERROR = "Course code error";
+	public static final String COURSE_NAME_ALREADY_EXIST_ERROR = "Course name error";
+	public static final String TIMING_ERROR = "The ending hour is before starting hour";
+	public static final String ROOM_FULL_EROOR = "ROOM_FULL_EROOR";
+	public static final String TEACHER_ALREADY_TEACHING_ERROR = "TEACHER_ALREADY_TEACHING_ERROR";
+	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
 	
-	private ArrayList<IView> viewers=new ArrayList<>();
+	private IView viewer;
 	private IModel model;
-	
+
 	public Controller(IModel model) {
-		this.model=model;
+		this.model = model;
 		model.registerListener(this);
 	}
-	@Override
-	public void handle(MyActionEvent e)  {
-		
-		if(e.getMsg().equals(DONE_CREATE_COURSE)){
-			Node pane=((IView)e.getSource()).createNewShowPane();
-			((IView)e.getSource()).setMainPane(pane);
-			
-		}
-		else if(e.getMsg().equals(CREATE_COURSE)){
-			Node pane=((IView)e.getSource()).createNewCoursePane();
-			((IView)e.getSource()).setMainPane(pane);
-			createNewCourse((IView)e.getSource());
-		}
-		else if(e.getMsg().equals(DONE_CREATE_SHOW)){
-			int numberOfSlots=((IView)e.getSource()).getNumberOfSlots();
-			Node pane=((IView)e.getSource()).createNewSlotPane(numberOfSlots);
-			((IView)e.getSource()).setMainPane(pane);
-			
-		}
-		else if(e.getMsg().equals(DONE_CREATE_SLOTS)){
-			Node pane=((IView)e.getSource()).courseMenuPane();
-			((IView)e.getSource()).setMainPane(pane);
-		}
-	}
-	private void createNewCourse(IView source) {
-		
-		
-	}
-	public void addViewer(ScheduleJFX viewer) {
-		viewers.add(viewer);
-		
-	}
-	
-	
 
-	
+	@Override
+	public void handle(MyActionEvent e) {
+
+		if (e.getMsg().equals(DONE_CREATE_COURSE_VIEWER)) {
+			createNewCourse((IView) e.getSource());
+		} else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
+			int numberOfSlots = viewer.getNumberOfSlots();
+			(viewer).setMainPane(viewer.createNewSlotPane(numberOfSlots));
+		}
+		else if (e.getMsg().equals(DONE_CREATE_SLOTS_VIEWER)) {
+			createNewShow((IView) e.getSource());
+		}
+		else if (e.getMsg().equals(DONE_CREATE_COURSE_MODEL)) {
+
+			viewer.setMainPane(viewer.createNewShowPane(Model.toIntFromString(viewer.getCourseInput()[0])));
+
+		} else if (e.getMsg().equals(CREATE_COURSE_VIEWER)) {
+
+			(viewer).setMainPane(((IView) e.getSource()).createNewCoursePane());
+
+		}  else if (e.getMsg().equals(DONE_CREATE_SLOTS_MODEL)) {
+			(viewer).setMainPane(viewer.courseMenuPane());
+
+		} else if (e.getMsg().equals(COURSE_CODE_ALREADY_EXIST_ERROR)) {
+
+			viewer.courseCodeException();
+
+		} else if (e.getMsg().equals(COURSE_NAME_ALREADY_EXIST_ERROR)) {
+
+			viewer.courseNameException();
+			
+		}
+		else if (e.getMsg().equals(TIMING_ERROR)){
+			viewer.slotTimingException();
+		}
+		else if (e.getMsg().equals(ROOM_FULL_EROOR)){
+			viewer.roomFullException();
+		}
+		else if (e.getMsg().equals(TEACHER_ALREADY_TEACHING_ERROR)){
+			viewer.teacherTeachingException();
+		}
+		else if (e.getMsg().equals(ROOM_INPUT_ISNT_INTEGER)){
+			viewer.roomInputIsntAint();
+		}
+	}
+
+
+	private void createNewShow(IView source) {
+		model.createNewShow(source.getCreatingCourseCode(),source.getSlotsInput(viewer.getNumberOfSlots()));
+		
+
+	}
+
+	private void createNewCourse(IView source) {
+		model.createNewCourse(source.getCourseInput());
+	}
+
+	public void addViewer(ScheduleJFX viewer) {
+		this.viewer = viewer;
+
+	}
+
 }

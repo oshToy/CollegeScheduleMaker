@@ -1,9 +1,7 @@
-import java.util.ArrayList;
-import java.util.Scanner;
 
+
+import exceptions.EndingTimeBeforeStartingTimeException;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Main extends Application{
@@ -113,7 +111,7 @@ public class Main extends Application{
 		return true;
 	}
 	*/
-	public static void main(String[] args) throws StartingTimeException, EndingTimeException {
+	public static void main(String[] args) throws  EndingTimeBeforeStartingTimeException {
 		/*
 		 ArrayList <Course> arrayOfCourse=new  ArrayList <Course>();
 		 

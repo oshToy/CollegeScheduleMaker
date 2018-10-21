@@ -1,3 +1,5 @@
+import exceptions.EndingTimeBeforeStartingTimeException;
+
 
 public class Slot implements IDay{
 
@@ -7,12 +9,12 @@ public class Slot implements IDay{
 	private Room room;
 	private Teacher teacher;
 	
-	public Slot(Day day,int startingTime, int endingTime, int numberOfRoom, String nameOfLect) throws StartingTimeException, EndingTimeException  {
+	public Slot(Day day,int startingTime, int endingTime, int numberOfRoom, String nameOfLect) throws  EndingTimeBeforeStartingTimeException  {
 		this.setDay(day);
 		this.setStartingTime(startingTime);
 		this.setEndingTime(endingTime);
-		this.setNumberOfRoom(new Room(numberOfRoom));
-		this.setNameOfLect(new Teacher(nameOfLect));
+		this.setRoom(new Room(numberOfRoom));
+		this.setTeacher(new Teacher(nameOfLect));
 	}
 
 	public Day getDay() {
@@ -27,12 +29,10 @@ public class Slot implements IDay{
 		return startingTime;
 	}
 
-	public void setStartingTime(int startingTime) throws StartingTimeException {
-		if(startingTime>=7 && startingTime<=24){
-		this.startingTime = startingTime;
-		}
-		else throw new StartingTimeException("The start hour not between 7-24");
+	public void setStartingTime(int startingTime) {
 		
+		this.startingTime = startingTime;
+	
 	}
 
 	
@@ -40,14 +40,13 @@ public class Slot implements IDay{
 		return endingTime;
 	}
 
-	public void setEndingTime(int endingTime) throws EndingTimeException {
-		if(startingTime>=7 && startingTime<=24){
-				if(this.startingTime!=0 && endingTime>this.startingTime){
+	public void setEndingTime(int endingTime) throws EndingTimeBeforeStartingTimeException {
+				if(endingTime>this.startingTime){
 					this.endingTime=endingTime;
 				} 
-				else throw new EndingTimeException("The ending hour is before starting hour");
-		}
-		else throw new EndingTimeException("The ending hour is not between 7-24");
+				else throw new EndingTimeBeforeStartingTimeException("The ending hour is before starting hour");
+		
+		
 		
 	}
 	
@@ -55,16 +54,16 @@ public class Slot implements IDay{
 		return room;
 	}
 
-	public void setNumberOfRoom(Room numberOfRoom) {
-		this.room = numberOfRoom;
+	public void setRoom(Room room) {
+		this.room = room;
 	}
 
 	public Teacher getTeacher() {
 		return teacher;
 	}
 
-	public void setNameOfLect(Teacher nameOfLect) {
-		this.teacher = nameOfLect;
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
 	}
 	public boolean matchTeacher(Slot newSlot){
 		if(this.getTeacher().getName().equals(newSlot.getTeacher().getName())){

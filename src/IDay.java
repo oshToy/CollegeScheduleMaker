@@ -26,4 +26,29 @@ public interface IDay {
 		
 		return null;
 	}
+	public static  Day dayByString(String dayByString){
+		if(dayByString.equals("Sunday")){
+			return IDay.Day.Sunday;
+		}
+		else if(dayByString.equals("Monday")){
+			return IDay.Day.Monday;
+		}
+		else if(dayByString.equals("Tuesday")){
+			return IDay.Day.Tuesday;
+		}
+		else if(dayByString.equals("Wednesday")){
+			return IDay.Day.Wednesday;
+		}
+		else if(dayByString.equals("Thursday")){
+			return IDay.Day.Thursday;
+		}
+		else if(dayByString.equals("Friday")){
+			return IDay.Day.Friday;
+		}
+		else if(dayByString.equals("Saturday")){
+			return IDay.Day.Saturday;
+		}
+		
+		return null;
+	}
 }
