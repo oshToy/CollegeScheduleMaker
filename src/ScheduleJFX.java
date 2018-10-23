@@ -1,5 +1,6 @@
 
 
+
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,17 +9,21 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class ScheduleJFX implements IView {
+	public static final int INITIAL_HOUR_OF_SCHEDULE=7;
+	public static final int LAST_HOUR_OF_SCHEDULE=24;
 	public static final int NUMBER_OF_INPUTS_PER_COURSE=3;
 	public static final int NUMBER_OF_INPUTS_PER_SHOW=1;
 	public static final int NUMBER_OF_INPUTS_PER_SLOT=5;
@@ -45,7 +50,18 @@ public class ScheduleJFX implements IView {
 	private Button btnDoneMakingShow=new Button("I'm done create show!");
 	private Button btnDoneMakingSlot=new Button("I'm done create slots!");
 	
-
+	
+	//days checkboxes
+	private CheckBox sunday;
+	private CheckBox monday;
+	private CheckBox tuesday;
+	private CheckBox wednesdaye;
+	private CheckBox thursday;
+	private CheckBox friday;
+	
+	//days checkboxes
+	private CheckBox []hoursCheckBoxes;
+	
 	private  BorderPane mainPane;
 	
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
@@ -59,6 +75,8 @@ public class ScheduleJFX implements IView {
 			setMainPane(courseMenuPane());
 			primaryStage.setScene(mainScene);
 			primaryStage.setAlwaysOnTop(true);
+			primaryStage.setFullScreen(true);
+			primaryStage.setResizable(false);
 			primaryStage.show();
 	}
 	private void init(){
@@ -77,7 +95,7 @@ public class ScheduleJFX implements IView {
 		invokeListeners(Controller.CREATE_COURSE_VIEWER);
 	}
 	private void doneMakingCoursesButtonAction() {
-		//mainPane.setCenter(createNewShowPane());
+		invokeListeners(Controller.DONE_CREATE_ALL_COURSES_VIEWER);
 	}
 	private void doneMakingShowAction() {
 		invokeListeners(Controller.DONE_CREATE_SHOW_VIEWER);
@@ -109,6 +127,47 @@ public class ScheduleJFX implements IView {
 		topPane.getChildren().addAll(btnMakeCourse,btnDoneMakingCourses);
 		
 		return topPane;
+	}
+	@Override
+	public Node schedulePane() {
+		GridPane mainPane = new GridPane();
+		mainPane.setPadding(new Insets(20));
+		mainPane.setMinSize(1080, 720); 
+		mainPane.setVgap(7);
+		mainPane.setVgap(19);
+		sunday=new CheckBox(IDay.Day.Sunday.toString());
+		daysTitleUI(sunday);
+		mainPane.add(sunday, 1, 0);
+		monday=new CheckBox(IDay.Day.Monday.toString());
+		daysTitleUI(monday);
+		mainPane.add(monday, 2, 0);
+		tuesday=new CheckBox(IDay.Day.Tuesday.toString());
+		daysTitleUI(tuesday);
+		mainPane.add(tuesday, 3, 0);
+		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
+		daysTitleUI(wednesdaye);
+		mainPane.add(wednesdaye, 4, 0);
+		thursday=new CheckBox(IDay.Day.Thursday.toString());
+		daysTitleUI(thursday);	
+		mainPane.add(thursday, 5, 0);
+		friday=new CheckBox(IDay.Day.Friday.toString());
+		daysTitleUI(friday);
+		mainPane.add(friday, 6, 0);
+		hoursCheckBoxes=new CheckBox[18];
+		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
+			CheckBox tempHourBox=new CheckBox(i+" - "+(i+1));
+			tempHourBox.setSelected(true);
+			tempHourBox.setPadding(new Insets(5));
+			hoursCheckBoxes[i-INITIAL_HOUR_OF_SCHEDULE]=tempHourBox;
+			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1);
+		}
+		
+		return mainPane;
+	}
+	private void daysTitleUI(CheckBox dayCheckBox) {
+		dayCheckBox.setPadding(new Insets(25));
+		dayCheckBox.setSelected(true);
+		
 	}
 	@Override
 	public Node createNewCoursePane() {

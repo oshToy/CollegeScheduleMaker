@@ -18,6 +18,7 @@ public interface IView {
 	public void roomFullException(int slotNumber);
 	void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
+	Node schedulePane();
 
 
 }

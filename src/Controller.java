@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 public class Controller implements EventHandler<MyActionEvent> {
 	// all finals that will references to comands from model and viewers
 	public static final String CREATE_COURSE_VIEWER = "button create course invoked";
+	public static final String DONE_CREATE_ALL_COURSES_VIEWER = "button Done create all course invoked";
 	public static final String DONE_CREATE_COURSE_VIEWER = "button Done create course invoked";
 	public static final String DONE_CREATE_SHOW_VIEWER = "button Done create show invoked";
 	public static final String DONE_CREATE_SLOTS_VIEWER = "buttonDone create slots invoked";
@@ -70,6 +71,10 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(ROOM_INPUT_ISNT_INTEGER)){
 			viewer.roomInputIsntAint(model.getIvokingSlotNumber());
+		}
+		else if (e.getMsg().equals(DONE_CREATE_ALL_COURSES_VIEWER)){
+			//ONLY FOR TEST !!
+			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
 		}
 	}
 
