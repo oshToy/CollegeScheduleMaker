@@ -13,11 +13,11 @@ public interface IView {
 	public void courseCodeException();
 	void courseNameException();
 	public int getCreatingCourseCode();
-	public String[][] getSlotsInput(int numberOfSlots);
-	public void slotTimingException();
-	public void roomFullException();
-	void teacherTeachingException();
-	public void roomInputIsntAint();
+	public String[][] getSlotsInput();
+	public void slotTimingException(int slotNumber);
+	public void roomFullException(int slotNumber);
+	void teacherTeachingException(int slotNumber);
+	public void roomInputIsntAint(int slotNumber);
 
 
 }

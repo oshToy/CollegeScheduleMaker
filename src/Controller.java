@@ -34,6 +34,7 @@ public class Controller implements EventHandler<MyActionEvent> {
 		} else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
 			int numberOfSlots = viewer.getNumberOfSlots();
 			(viewer).setMainPane(viewer.createNewSlotPane(numberOfSlots));
+			model.setShowNumberPlusOne(viewer.getCreatingCourseCode());
 		}
 		else if (e.getMsg().equals(DONE_CREATE_SLOTS_VIEWER)) {
 			createNewShow((IView) e.getSource());
@@ -59,22 +60,22 @@ public class Controller implements EventHandler<MyActionEvent> {
 			
 		}
 		else if (e.getMsg().equals(TIMING_ERROR)){
-			viewer.slotTimingException();
+			viewer.slotTimingException(model.getIvokingSlotNumber());
 		}
 		else if (e.getMsg().equals(ROOM_FULL_EROOR)){
-			viewer.roomFullException();
+			viewer.roomFullException(model.getIvokingSlotNumber());
 		}
 		else if (e.getMsg().equals(TEACHER_ALREADY_TEACHING_ERROR)){
-			viewer.teacherTeachingException();
+			viewer.teacherTeachingException(model.getIvokingSlotNumber());
 		}
 		else if (e.getMsg().equals(ROOM_INPUT_ISNT_INTEGER)){
-			viewer.roomInputIsntAint();
+			viewer.roomInputIsntAint(model.getIvokingSlotNumber());
 		}
 	}
 
 
 	private void createNewShow(IView source) {
-		model.createNewShow(source.getCreatingCourseCode(),source.getSlotsInput(viewer.getNumberOfSlots()));
+		model.createNewShow(source.getCreatingCourseCode(),source.getSlotsInput());
 		
 
 	}

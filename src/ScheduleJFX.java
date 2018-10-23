@@ -34,12 +34,8 @@ public class ScheduleJFX implements IView {
 	private ComboBox numberOfSlotsComboBox;
 	
 	//slot input
-
-	private ComboBox dayComboBox;
-	private ComboBox startTimeComboBox;
-	private ComboBox finishTimeComboBox;
-	private TextField roomNumber;
-	private TextField lecturerName;
+	private SlotInputObjects slotComboBoxandTextField[];
+	private String slotsInput[][];
 
 	
 	//buttons
@@ -49,7 +45,7 @@ public class ScheduleJFX implements IView {
 	private Button btnDoneMakingShow=new Button("I'm done create show!");
 	private Button btnDoneMakingSlot=new Button("I'm done create slots!");
 	
-	private String slotsInput[][];
+
 	private  BorderPane mainPane;
 	
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
@@ -91,15 +87,17 @@ public class ScheduleJFX implements IView {
 
 	}
 	@Override
-	public String[][] getSlotsInput(int numberOfSlots) {
-		slotsInput=new String[numberOfSlots][NUMBER_OF_INPUTS_PER_SLOT]; //should be for textfield and check box ;
-		for (int i = 0; i < numberOfSlots; i++) {
-		slotsInput[i][0]=(String) dayComboBox.getValue();
-		slotsInput[i][1]=(String) startTimeComboBox.getValue();
-		slotsInput[i][2]=(String) finishTimeComboBox.getValue();
-		slotsInput[i][3]=roomNumber.getText();
-		slotsInput[i][4]=lecturerName.getText();
+	public String[][] getSlotsInput() {
+		slotsInput=new String[getNumberOfSlots()][NUMBER_OF_INPUTS_PER_SLOT]; //should be for textfield and check box ;
+		for (int i = 0; i < getNumberOfSlots(); i++) {
+
+			slotsInput[i][0]=(String) slotComboBoxandTextField[i].getDayComboBox().getValue();
+			slotsInput[i][1]=(String) slotComboBoxandTextField[i].getStartTimeComboBox().getValue();
+			slotsInput[i][2]=(String) slotComboBoxandTextField[i].getFinishTimeComboBox().getValue();
+			slotsInput[i][3]=slotComboBoxandTextField[i].getRoomNumber().getText();
+			slotsInput[i][4]=slotComboBoxandTextField[i].getLecturerName().getText();
 		}
+		
 		return slotsInput;
 	}
 	@Override
@@ -159,6 +157,7 @@ public class ScheduleJFX implements IView {
 	}
 	@Override
 	public Node createNewSlotPane(int amountOfSlots) {
+		slotComboBoxandTextField=new SlotInputObjects [amountOfSlots];
 		VBox slotPane=new VBox(20);
 		slotPane.setPadding(new Insets(DEFAULT_PADDING));
 		Label newShowLab=new Label("Creating new Slots");
@@ -166,20 +165,25 @@ public class ScheduleJFX implements IView {
 		newShowLab.setUnderline(true);
 		slotPane.getChildren().add(newShowLab);
 		for (int i = 0; i < amountOfSlots; i++) {
+			slotComboBoxandTextField[i]=new SlotInputObjects();
 			HBox slotInputPane = new HBox(5);
-			dayComboBox = new ComboBox<>(dayObservableList());
+			ComboBox dayComboBox = new ComboBox<>(dayObservableList());
 			dayComboBox.setPromptText("Choose day");
-			startTimeComboBox = new ComboBox<>(TimeObservableList());
+			slotComboBoxandTextField[i].setDayComboBox(dayComboBox);
+			ComboBox startTimeComboBox = new ComboBox<>(TimeObservableList());
 			startTimeComboBox.setPromptText("Start time");
-			finishTimeComboBox = new ComboBox<>(TimeObservableList());
+			slotComboBoxandTextField[i].setStartTimeComboBox(startTimeComboBox);
+			ComboBox finishTimeComboBox = new ComboBox<>(TimeObservableList());
 		    finishTimeComboBox.setPromptText("Finish time");
-			roomNumber = new TextField();
+		    slotComboBoxandTextField[i].setFinishTimeComboBox(finishTimeComboBox);
+		    TextField roomNumber = new TextField();
 			Label roomNumberLab = new Label("Room Number : ");
-			lecturerName = new TextField();
+			slotComboBoxandTextField[i].setRoomNumber(roomNumber);
+			TextField lecturerName = new TextField();
 			Label lecturerNameLab = new Label("Lecturer name : ");
+			slotComboBoxandTextField[i].setLecturerName(lecturerName);
 			slotInputPane.getChildren().addAll(dayComboBox,startTimeComboBox,finishTimeComboBox,roomNumberLab,roomNumber,lecturerNameLab,lecturerName);
 			slotPane.getChildren().add(slotInputPane);
-
 			
 		}
 		
@@ -255,37 +259,56 @@ public class ScheduleJFX implements IView {
 			listener.handle(new MyActionEvent(this, command));
 		}
 	}
-	@Override
-	public void slotTimingException() {
-		roomNumber.getStyleClass().removeAll("errorTextField");
-		lecturerName.getStyleClass().removeAll("errorTextField");
-		startTimeComboBox.getStyleClass().add("errorTextField");
-		finishTimeComboBox.getStyleClass().add("errorTextField");
-		
+
+@Override
+public void slotTimingException(int slotNumber) {
+	clearAllSlotStyleExceptOne(slotNumber);
+	slotComboBoxandTextField[slotNumber].getRoomNumber().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getLecturerName().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getStartTimeComboBox().getStyleClass().add("errorTextField");
+	slotComboBoxandTextField[slotNumber].getFinishTimeComboBox().getStyleClass().add("errorTextField");
+	
+}
+@Override
+public void roomFullException(int slotNumber) {
+	roomSlotException(slotNumber);
+	
+}
+@Override
+public void roomInputIsntAint(int slotNumber) {
+	roomSlotException(slotNumber);
+	
+}
+@Override
+public void teacherTeachingException(int slotNumber) {
+	clearAllSlotStyleExceptOne(slotNumber);
+	slotComboBoxandTextField[slotNumber].getStartTimeComboBox().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getFinishTimeComboBox().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getRoomNumber().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getLecturerName().getStyleClass().add("errorTextField");
+	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Teacher teaching those hours");
+}
+private void clearAllSlotStyleExceptOne(int slotNumber) {
+	for (int i = 0; i < slotComboBoxandTextField.length; i++) {
+		if(i!=slotNumber){
+		slotComboBoxandTextField[i].getStartTimeComboBox().getStyleClass().removeAll("errorTextField");
+		slotComboBoxandTextField[i].getFinishTimeComboBox().getStyleClass().removeAll("errorTextField");
+		slotComboBoxandTextField[i].getRoomNumber().getStyleClass().removeAll("errorTextField");
+		slotComboBoxandTextField[i].getLecturerName().getStyleClass().removeAll("errorTextField");
+		slotComboBoxandTextField[i].getDayComboBox().getStyleClass().removeAll("errorTextField");
+		}
 	}
-	@Override
-	public void roomFullException() {
-		roomSlotException();
-		
-	}
-	@Override
-	public void teacherTeachingException() {
-		startTimeComboBox.getStyleClass
-		().removeAll("errorTextField");
-		finishTimeComboBox.getStyleClass().removeAll("errorTextField");
-		roomNumber.getStyleClass().removeAll("errorTextField");
-		lecturerName.getStyleClass().add("errorTextField");
-		
-	}
-	@Override
-	public void roomInputIsntAint() {
-		roomSlotException();
-		
-	}
-	private void roomSlotException(){
-		startTimeComboBox.getStyleClass().removeAll("errorTextField");
-		finishTimeComboBox.getStyleClass().removeAll("errorTextField");
-		lecturerName.getStyleClass().removeAll("errorTextField");
-		roomNumber.getStyleClass().add("errorTextField");
-	}
+	
+}
+private void roomSlotException(int slotNumber){
+	clearAllSlotStyleExceptOne(slotNumber);
+	slotComboBoxandTextField[slotNumber].getStartTimeComboBox().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getFinishTimeComboBox().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getLecturerName().getStyleClass().removeAll("errorTextField");
+	slotComboBoxandTextField[slotNumber].getRoomNumber().getStyleClass().add("errorTextField");
+	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Room occupied those hours");
+
+}
+
+
 }

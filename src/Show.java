@@ -2,6 +2,12 @@ import java.util.ArrayList;
 
 
 public class Show {
+	
+	@Override
+	public String toString() {
+		return "Show [showCode=" + showCode + ", slots=" + slots + "]";
+	}
+
 	private int showCode;
 	private ArrayList<Slot> slots;
 	public Show(int showCode ){
