@@ -55,6 +55,7 @@ public class ScheduleJFX implements IView {
 	private Button btnDoneMakingSlot=new Button("I'm done create slots!");
 	
 	
+	
 	//days checkboxes
 	private CheckBox sunday;
 	private CheckBox monday;
@@ -94,6 +95,13 @@ public class ScheduleJFX implements IView {
 		btnDoneMakingSingalCourse.setOnAction(e -> doneMakingMakingSingalCourseAction());
 		btnDoneMakingShow.setOnAction(e -> doneMakingShowAction());
 		btnDoneMakingSlot.setOnAction(e -> doneMakingSlotAction());
+
+		
+	}
+	
+	private void scheduleButtonsUnAvctive() {
+		invokeListeners(Controller.SCHEDULE_BUTTON_UN_ACTIVE);
+
 	}
 	
 	private void doneMakingMakingSingalCourseAction() {
@@ -180,6 +188,7 @@ public class ScheduleJFX implements IView {
 			tempButton.setMinWidth(150);
 			tempButton.setMinHeight(40);
 			System.out.println(tempButton.getStyleClass().get(1));
+			tempButton.setOnAction(e -> scheduleButtonsUnAvctive());
 			scheduleButtons[i][j]=tempButton;
 			mainPane.add(tempButton,i+1,j+1);
 			}
@@ -402,5 +411,22 @@ private void roomSlotException(int slotNumber){
 	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Room occupied those hours");
 
 }
+public void diactiveCollorButton(Button button) {
+	button.getStylesheets().clear();
+	button.getStylesheets().add("scheduleButtonUnactive");
+}
+
+
+public void activeCollorButton(Button button) {
+	button.getStylesheets().clear();
+	button.getStylesheets().add("scheduleButtonActive");
+}
+public boolean isButoonActive(Button button) {
+	if(button.getStylesheets().get(1).equals("scheduleButtonActive")) {
+		return true;
+	}
+	return false;
+	}
+
 
 }

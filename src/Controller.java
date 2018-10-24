@@ -1,6 +1,7 @@
 
 
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 
 
 public class Controller implements EventHandler<MyActionEvent> {
@@ -20,6 +21,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
 	public static final String DAY_CHECKBOX_ACTIVATED = "day checkbox activated";
 	public static final String DAY_CHECKBOX_DEACTIVATED = "day checkbox deactivated";
+	public static final String SCHEDULE_BUTTON_UN_ACTIVE = " schedule button is changed from/to active";
+
 	
 	private IView viewer;
 	private IModel model;
@@ -78,6 +81,7 @@ public class Controller implements EventHandler<MyActionEvent> {
 			//ONLY FOR TEST !!
 			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
 		}
+
 		else if (e.getMsg().equals(DAY_CHECKBOX_ACTIVATED)){
 			//ONLY FOR TEST !!
 			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
@@ -86,6 +90,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 			//ONLY FOR TEST !!
 			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
 		}
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_UN_ACTIVE)) {
+					}
 	}
 
 	private void createNewShow(IView source) {
@@ -100,5 +106,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 		this.viewer = viewer;
 
 	}
+
+    
+	
 
 }
