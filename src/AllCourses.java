@@ -60,6 +60,10 @@ public class AllCourses {
 		//wantedCourse.getShows()[numOfShow].getSlots().add(newSlot);
 		wantedCourse.getShows().get(numOfShow).getSlots().add(newSlot);
 	}
+	@Override
+	public String toString() {
+		return "AllCourses [mapOfCorses=" + mapOfCorses + "]";
+	}
 	public boolean ligitSlotByTeacher(Slot newSlot) {
 		for (Course course : mapOfCorses.values()) {
 			for (Show shows : course.getShows().values()){	

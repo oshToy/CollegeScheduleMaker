@@ -1,4 +1,4 @@
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 
 import exceptions.CourseCodeAlreadyExistException;
@@ -7,7 +7,6 @@ import exceptions.EndingTimeBeforeStartingTimeException;
 import exceptions.RoomFullException;
 import exceptions.TeacherTeachingException;
 import exceptions.courseNotExistException;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 
 public class Model implements IModel {
@@ -15,17 +14,47 @@ public class Model implements IModel {
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
 	private AllCourses allCourses = new AllCourses();
 	private Schedule schedule = new Schedule();
+	private int ivokingSlotNumber;
+	private int showNumber;
+	
 
+	public int getShowNumber() {
+		return showNumber;
+	}
+	public void setShowNumber(int showNumber) {
+
+		this.showNumber = showNumber;
+	}
+	@Override
+	public void setShowNumberPlusOne(int courseCode) {
+		try {
+			this.showNumber=allCourses.getCourseById(courseCode).getShows().size();
+		} catch (courseNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void createNewCourse(String[] courseInput) {
 		try {
 			allCourses.addCourse(toIntFromString(courseInput[0]), courseInput[1]);
 			invokeListeners(Controller.DONE_CREATE_COURSE_MODEL);
+			return;
 		} catch (CourseCodeAlreadyExistException | NumberFormatException e) {
 			invokeListeners(Controller.COURSE_CODE_ALREADY_EXIST_ERROR);
+			return;
 		} catch (CourseNameAlreadyExistException e) {
 			invokeListeners(Controller.COURSE_NAME_ALREADY_EXIST_ERROR);
+			return;
 		}
+	}
+@Override
+	public int getIvokingSlotNumber() {
+		return ivokingSlotNumber;
+	}
+
+	private void setIvokingSlotNumber(int ivokingSlotNumber) {
+		this.ivokingSlotNumber = ivokingSlotNumber;
 	}
 
 	@Override
@@ -36,45 +65,58 @@ public class Model implements IModel {
 
 	@Override
 	public void createNewShow(int courseCode, String[][] slotsInput) {
-		int showId;
-		Course course;
-
 			try {
 
-			showId = allCourses.getCourseById(courseCode).getShows().size();
-			allCourses.addShow(courseCode, showId);
-			for (int i = 0; i < slotsInput.length; i++) {
+			
+			//avoiding create same show after return from error input
+			if(allCourses.getCourseById(courseCode).getShowByShowCourse(showNumber)==null){//IS the show already created ?
+			allCourses.addShow(courseCode, showNumber);
+			}
+			else {
+				allCourses.getCourseById(courseCode).getShowByShowCourse(showNumber).getSlots().clear();//override data from the slots input
+			
+			}
+			for (int i=0; i < slotsInput.length; i++) {
 				IDay.Day day = IDay.dayByString(slotsInput[i][0]);
-
 				int startingTime = toIntFromString(slotsInput[i][1]);
-
 				int endingTime = toIntFromString(slotsInput[i][2]);
 				int numberOfRoom=0;
 				try{
 				numberOfRoom = toIntFromString(slotsInput[i][3]);
 				} catch (NumberFormatException e) {
+					setIvokingSlotNumber(i);
 					invokeListeners(Controller.ROOM_INPUT_ISNT_INTEGER);
+					return;
 				}
 				String nameOfLect = slotsInput[i][4];
 				try {
 					try {
-						allCourses.addShow(courseCode, showId);
-						allCourses.addSlot(courseCode, showId, i, day, startingTime, endingTime, numberOfRoom, nameOfLect);
-						invokeListeners(Controller.DONE_CREATE_SLOTS_MODEL);
+						allCourses.addSlot(courseCode, showNumber, i, day, startingTime, endingTime, numberOfRoom, nameOfLect);
 					} catch (RoomFullException e) {
+						setIvokingSlotNumber(i);
 						invokeListeners(Controller.ROOM_FULL_EROOR);
+						return;
 					} catch (TeacherTeachingException e) {
+						setIvokingSlotNumber(i);
 						invokeListeners(Controller.TEACHER_ALREADY_TEACHING_ERROR);
+						return;
 					}
 				} catch (EndingTimeBeforeStartingTimeException e) {
+					setIvokingSlotNumber(i);
 					invokeListeners(Controller.TIMING_ERROR);
+					return;
 				}
 			}
+				System.out.println(allCourses);
+			
+			invokeListeners(Controller.DONE_CREATE_SLOTS_MODEL);
+			return;
 			} catch (courseNotExistException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				return;
 			}
-		
+			
 
 	}
 

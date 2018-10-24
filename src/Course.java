@@ -6,6 +6,10 @@ public class Course {
 	
 	private int courseCode;
 	private String name;
+	@Override
+	public String toString() {
+		return "Course [courseCode=" + courseCode + ", name=" + name + ", mapOfShows=" + mapOfShows + "]";
+	}
 	//private Show[] mapOfShows;
 	private Map  <Integer,Show> mapOfShows;
 	
