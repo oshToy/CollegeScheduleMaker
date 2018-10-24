@@ -78,11 +78,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 	}
 
-
 	private void createNewShow(IView source) {
 		model.createNewShow(source.getCreatingCourseCode(),source.getSlotsInput());
-		
-
 	}
 
 	private void createNewCourse(IView source) {

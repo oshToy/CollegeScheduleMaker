@@ -2,6 +2,9 @@
 
 
 import java.util.ArrayList;
+
+import com.sun.javafx.scene.layout.region.BorderImageSlices;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -13,8 +16,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -60,7 +64,10 @@ public class ScheduleJFX implements IView {
 	private CheckBox friday;
 	
 	//days checkboxes
-	private CheckBox []hoursCheckBoxes;
+	private Label []hoursCheckBoxes;
+	
+	//shedule buttons
+	private Button[][]scheduleButtons;
 	
 	private  BorderPane mainPane;
 	
@@ -131,10 +138,10 @@ public class ScheduleJFX implements IView {
 	@Override
 	public Node schedulePane() {
 		GridPane mainPane = new GridPane();
-		mainPane.setPadding(new Insets(20));
+		mainPane.setPadding(new Insets(30,30,10,100));
 		mainPane.setMinSize(1080, 720); 
 		mainPane.setVgap(7);
-		mainPane.setVgap(19);
+		mainPane.setVgap(18);
 		sunday=new CheckBox(IDay.Day.Sunday.toString());
 		daysTitleUI(sunday);
 		mainPane.add(sunday, 1, 0);
@@ -146,6 +153,7 @@ public class ScheduleJFX implements IView {
 		mainPane.add(tuesday, 3, 0);
 		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
 		daysTitleUI(wednesdaye);
+		wednesdaye.setPadding(new Insets(0,50,0,0));
 		mainPane.add(wednesdaye, 4, 0);
 		thursday=new CheckBox(IDay.Day.Thursday.toString());
 		daysTitleUI(thursday);	
@@ -153,20 +161,35 @@ public class ScheduleJFX implements IView {
 		friday=new CheckBox(IDay.Day.Friday.toString());
 		daysTitleUI(friday);
 		mainPane.add(friday, 6, 0);
-		hoursCheckBoxes=new CheckBox[18];
+		hoursCheckBoxes=new Label[18];
 		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
-			CheckBox tempHourBox=new CheckBox(i+" - "+(i+1));
-			tempHourBox.setSelected(true);
-			tempHourBox.setPadding(new Insets(5));
+			Label tempHourBox=new Label(i+" - "+(i+1));
+			tempHourBox.setPadding(new Insets(0,20,0,0));
+			tempHourBox.getStyleClass().add("scheduleTime");
 			hoursCheckBoxes[i-INITIAL_HOUR_OF_SCHEDULE]=tempHourBox;
-			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1);
+			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1,1,1);
+		}
+		scheduleButtons=new Button[6][LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE];
+				
+		for (int i=0;i<6;i++){
+			for(int j=0;j<LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE;j++){
+			Button tempButton=new Button();
+			tempButton.getStyleClass().add("scheduleButtonActive");
+			tempButton.setPadding(new Insets(0,15,0,15));
+			tempButton.setMinWidth(150);
+			tempButton.setMinHeight(40);
+			System.out.println(tempButton.getStyleClass().get(1));
+			scheduleButtons[i][j]=tempButton;
+			mainPane.add(tempButton,i+1,j+1);
+			}
 		}
 		
 		return mainPane;
 	}
 	private void daysTitleUI(CheckBox dayCheckBox) {
-		dayCheckBox.setPadding(new Insets(25));
+		dayCheckBox.setPadding(new Insets(0,80,0,0));
 		dayCheckBox.setSelected(true);
+		dayCheckBox.getStyleClass().add("scheduleDays");
 		
 	}
 	@Override
