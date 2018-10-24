@@ -65,6 +65,7 @@ public class ScheduleJFX implements IView {
 	
 	//days checkboxes
 	private Label []hoursCheckBoxes;
+	private int invokingDayNumber;
 	
 	//shedule buttons
 	private Button[][]scheduleButtons;
@@ -94,9 +95,9 @@ public class ScheduleJFX implements IView {
 		btnDoneMakingShow.setOnAction(e -> doneMakingShowAction());
 		btnDoneMakingSlot.setOnAction(e -> doneMakingSlotAction());
 	}
+	
 	private void doneMakingMakingSingalCourseAction() {
 		invokeListeners(Controller.DONE_CREATE_COURSE_VIEWER);
-
 	}
 	private void makeCourseButtonAction() {
 		invokeListeners(Controller.CREATE_COURSE_VIEWER);
@@ -143,23 +144,23 @@ public class ScheduleJFX implements IView {
 		mainPane.setVgap(7);
 		mainPane.setVgap(18);
 		sunday=new CheckBox(IDay.Day.Sunday.toString());
-		daysTitleUI(sunday);
+		daysTitleInit(sunday);
 		mainPane.add(sunday, 1, 0);
 		monday=new CheckBox(IDay.Day.Monday.toString());
-		daysTitleUI(monday);
+		daysTitleInit(monday);
 		mainPane.add(monday, 2, 0);
 		tuesday=new CheckBox(IDay.Day.Tuesday.toString());
-		daysTitleUI(tuesday);
+		daysTitleInit(tuesday);
 		mainPane.add(tuesday, 3, 0);
 		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
-		daysTitleUI(wednesdaye);
+		daysTitleInit(wednesdaye);
 		wednesdaye.setPadding(new Insets(0,50,0,0));
 		mainPane.add(wednesdaye, 4, 0);
 		thursday=new CheckBox(IDay.Day.Thursday.toString());
-		daysTitleUI(thursday);	
+		daysTitleInit(thursday);	
 		mainPane.add(thursday, 5, 0);
 		friday=new CheckBox(IDay.Day.Friday.toString());
-		daysTitleUI(friday);
+		daysTitleInit(friday);
 		mainPane.add(friday, 6, 0);
 		hoursCheckBoxes=new Label[18];
 		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
@@ -186,10 +187,20 @@ public class ScheduleJFX implements IView {
 		
 		return mainPane;
 	}
-	private void daysTitleUI(CheckBox dayCheckBox) {
+	private void daysTitleInit(CheckBox dayCheckBox) {
 		dayCheckBox.setPadding(new Insets(0,80,0,0));
 		dayCheckBox.setSelected(true);
 		dayCheckBox.getStyleClass().add("scheduleDays");
+		dayCheckBox.setOnAction(e->dayCheckBoxAction(dayCheckBox));
+		
+	}
+	private void dayCheckBoxAction(CheckBox dayCheckBox) {
+		if(dayCheckBox.isSelected()){
+			invokeListeners(Controller.DAY_CHECKBOX_ACTIVATED);
+		}
+		else{
+			invokeListeners(Controller.DAY_CHECKBOX_DEACTIVATED);
+		}
 		
 	}
 	@Override
@@ -391,6 +402,5 @@ private void roomSlotException(int slotNumber){
 	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Room occupied those hours");
 
 }
-
 
 }

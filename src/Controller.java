@@ -18,6 +18,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String ROOM_FULL_EROOR = "ROOM_FULL_EROOR";
 	public static final String TEACHER_ALREADY_TEACHING_ERROR = "TEACHER_ALREADY_TEACHING_ERROR";
 	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
+	public static final String DAY_CHECKBOX_ACTIVATED = "day checkbox activated";
+	public static final String DAY_CHECKBOX_DEACTIVATED = "day checkbox deactivated";
 	
 	private IView viewer;
 	private IModel model;
@@ -26,13 +28,13 @@ public class Controller implements EventHandler<MyActionEvent> {
 		this.model = model;
 		model.registerListener(this);
 	}
-
 	@Override
 	public void handle(MyActionEvent e) {
-
+		
 		if (e.getMsg().equals(DONE_CREATE_COURSE_VIEWER)) {
 			createNewCourse((IView) e.getSource());
-		} else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
+		}
+		else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
 			int numberOfSlots = viewer.getNumberOfSlots();
 			(viewer).setMainPane(viewer.createNewSlotPane(numberOfSlots));
 			model.setShowNumberPlusOne(viewer.getCreatingCourseCode());
@@ -73,6 +75,14 @@ public class Controller implements EventHandler<MyActionEvent> {
 			viewer.roomInputIsntAint(model.getIvokingSlotNumber());
 		}
 		else if (e.getMsg().equals(DONE_CREATE_ALL_COURSES_VIEWER)){
+			//ONLY FOR TEST !!
+			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
+		}
+		else if (e.getMsg().equals(DAY_CHECKBOX_ACTIVATED)){
+			//ONLY FOR TEST !!
+			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
+		}
+		else if (e.getMsg().equals(DAY_CHECKBOX_DEACTIVATED)){
 			//ONLY FOR TEST !!
 			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
 		}
