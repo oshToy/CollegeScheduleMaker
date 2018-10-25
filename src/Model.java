@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import exceptions.CourseCodeAlreadyExistException;
 import exceptions.CourseNameAlreadyExistException;
@@ -16,7 +17,7 @@ public class Model implements IModel {
 	private Schedule schedule = new Schedule();
 	private int ivokingSlotNumber;
 	private int showNumber;
-	
+	private ISlot[] inokedSlots;
 
 	public int getShowNumber() {
 		return showNumber;
@@ -107,7 +108,6 @@ public class Model implements IModel {
 					return;
 				}
 			}
-				System.out.println(allCourses);
 			
 			invokeListeners(Controller.DONE_CREATE_SLOTS_MODEL);
 			return;
@@ -129,5 +129,29 @@ public class Model implements IModel {
 			listener.handle(new MyActionEvent(this, command));
 		}
 	}
+	@Override
+	public Collection<ICourse> getAllCourses() {
+		return allCourses.getMapOfCourse().values();
+	}
+	@Override
+	public void addCourseToSchedule(ICourse wantedCourse, int showCode) {
+		try {
+			
+			schedule.addCourseToSchedule(allCourses.getCourseById(wantedCourse.getCourseCode()), showCode);
+			inokedSlots=new ISlot[allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().size()];
+			allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().toArray(inokedSlots);
+			System.out.println(schedule.getCourseOfSchedule().values());
+			invokeListeners(Controller.COURSE_ADDED_TO_SCHEDULE);
+		} catch (courseNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public ISlot[] getInokedSlots() {
+		return inokedSlots;
+	}
+
 
 }

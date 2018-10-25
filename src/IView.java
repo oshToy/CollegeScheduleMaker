@@ -1,3 +1,5 @@
+import java.util.Collection;
+
 import javafx.scene.Node;
 
 public interface IView {
@@ -11,14 +13,19 @@ public interface IView {
 	public String[] getCourseInput();
 	public String[] getShowInput();
 	public void courseCodeException();
-	void courseNameException();
+	public void courseNameException();
 	public int getCreatingCourseCode();
 	public String[][] getSlotsInput();
 	public void slotTimingException(int slotNumber);
 	public void roomFullException(int slotNumber);
-	void teacherTeachingException(int slotNumber);
+	public void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
-	Node schedulePane();
+	public void scheduleMakerPane(Collection<ICourse> coursesName);
+	void changeColumnToDeactiveColor(int coulmn);
+	int getInvokingDayNumber();
+	void changeColumnToActiveColor(int coulmn);
+	CourseCheckBox getInvokingCourseCheckboxes();
+	public void addSlotTOschedule(ISlot[] iSlots);
 
 
 }
