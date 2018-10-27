@@ -484,14 +484,12 @@ public void deactiveCollorButton(ScheduleButton button) {
 	button.getStyleClass().clear();
 	button.getStyleClass().add("scheduleButtonUnactive");
 	button.setFlag(false);
-	System.out.println("UN_Active");
 }
 
 public void activeCollorButton(ScheduleButton button) {
 	button.getStyleClass().clear();
 	button.getStyleClass().add("scheduleButtonActive");
 	button.setFlag(true);
-	System.out.println("activvv");
 }
 
 @Override
