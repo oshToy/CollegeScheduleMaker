@@ -9,27 +9,29 @@ import exceptions.TeacherTeachingException;
 import exceptions.courseNotExistException;
 
 public class AllCourses {
-	private Map  <Integer,Course> mapOfCorses;
+	private Map  <Integer,Course> mapOfCourses;
 	
 	public AllCourses(){
-		this.mapOfCorses=new HashMap<>();
+		this.mapOfCourses=new HashMap<>();
 	}
 	public void addCourse(int courseId,String courseName) throws CourseCodeAlreadyExistException,CourseNameAlreadyExistException,NumberFormatException{
-		for (Course course : mapOfCorses.values()) {
+		for (ICourse icourse : mapOfCourses.values()) {
+			Course course=(Course) icourse;
 			if(course.getCourseCode()==courseId){
 				throw new CourseCodeAlreadyExistException("Id ALREADY EXIST !");
 			}
-			if(course.getName().equals(courseName)){
+			if(course.getCourseName().equals(courseName)){
 				throw new CourseNameAlreadyExistException("NAME ALREADY EXIST !");
 			}	
 		}
 		Course course=new Course(courseId,courseName);
-		mapOfCorses.put(courseId,course);
+		mapOfCourses.put(courseId,course);
 		
 	}
 	public Course getCourseById(int courseId) throws courseNotExistException{
 		Course wantedCourse = null;
-		for (Course course : mapOfCorses.values()) {
+		for (ICourse icourse : mapOfCourses.values()) {
+			Course course=(Course) icourse;
 			if (course.getCourseCode()==courseId) {
 				wantedCourse=course;
 			}
@@ -45,8 +47,8 @@ public class AllCourses {
 		Course wantedCourse = getCourseById(courseId);
 		wantedCourse.getShows().put(showCode, show);
 	}
-	public Map  <Integer,Course> getArrayOfCourse() {
-		return mapOfCorses;
+	public Map  <Integer,Course> getMapOfCourse() {
+		return mapOfCourses;
 	}
 	public void addSlot(int courseId,int numOfShow,int numOfSlot,IDay.Day day,int startingTime,int endingTime,int numberOfRoom,String nameOfLect) throws RoomFullException, TeacherTeachingException, EndingTimeBeforeStartingTimeException, courseNotExistException {
 		Slot newSlot=new Slot(day, startingTime, endingTime, numberOfRoom, nameOfLect);
@@ -57,15 +59,15 @@ public class AllCourses {
 			throw new TeacherTeachingException("Teacher teaching those hours");  
 		}
 		Course wantedCourse = getCourseById(courseId);
-		//wantedCourse.getShows()[numOfShow].getSlots().add(newSlot);
 		wantedCourse.getShows().get(numOfShow).getSlots().add(newSlot);
 	}
 	@Override
 	public String toString() {
-		return "AllCourses [mapOfCorses=" + mapOfCorses + "]";
+		return "AllCourses [mapOfCorses=" + mapOfCourses + "]";
 	}
 	public boolean ligitSlotByTeacher(Slot newSlot) {
-		for (Course course : mapOfCorses.values()) {
+		for (ICourse icourse : mapOfCourses.values()) {
+			Course course=(Course) icourse;
 			for (Show shows : course.getShows().values()){	
 				for (Slot slot : shows.getSlots()) {
 					if(slot!=null&&newSlot.matchTeacher(slot)==true&&newSlot.noMatchingHours(slot)==false){//TODO clear null condition
@@ -77,7 +79,8 @@ public class AllCourses {
 		return true;
 	}
 	public boolean ligitSlotByroom(Slot tempSlot) {
-		for (Course course : mapOfCorses.values()) {
+		for (ICourse icourse : mapOfCourses.values()) {
+			Course course=(Course) icourse;
 			//for (Show shows : course.getShows()){
 			for (Show shows : course.getShows().values()){
 				for (Slot slot : shows.getSlots()) {

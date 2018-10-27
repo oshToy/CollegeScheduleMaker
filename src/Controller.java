@@ -20,21 +20,33 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String TEACHER_ALREADY_TEACHING_ERROR = "TEACHER_ALREADY_TEACHING_ERROR";
 	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
 	public static final String SCHEDULE_BUTTON_UNACTIVE = " schedule button is changed from/to active";
+	public static final String DAY_CHECKBOX_ACTIVATED = "day checkbox activated";
+	public static final String DAY_CHECKBOX_DEACTIVATED = "day checkbox deactivated";
+	public static final String COURSE_CHECKBOX_ACTIVATED = "courseCB activated";
+	public static final String COURSE_CHECKBOX_DEACTIVATED = "courseCB deactivated";
+	public static final String COURSE_ADDED_TO_SCHEDULE = "course add to schedule";
+	public static final String COURSE_REMOVED_FROM_SCHEDULE = "course remove from schedule";
+
 	
 	private IView viewer;
 	private IModel model;
-
+	private boolean testing=true;	//TODO FOR TESTING ONLY!!!
 	public Controller(IModel model) {
 		this.model = model;
 		model.registerListener(this);
 	}
-
 	@Override
 	public void handle(MyActionEvent e) {
-
+		
+		//TODO FOR TESTING ONLY!!!
+		if(testing==true){
+		TestScheduleInsert.testSchedule(model.getModelForTestingOnly());
+		testing=false;
+		}
 		if (e.getMsg().equals(DONE_CREATE_COURSE_VIEWER)) {
 			createNewCourse((IView) e.getSource());
-		} else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
+		}
+		else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
 			int numberOfSlots = viewer.getNumberOfSlots();
 			(viewer).setMainPane(viewer.createNewSlotPane(numberOfSlots));
 			model.setShowNumberPlusOne(viewer.getCreatingCourseCode());
@@ -76,7 +88,29 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(DONE_CREATE_ALL_COURSES_VIEWER)){
 			//ONLY FOR TEST !!
-			(viewer).setMainPane(((IView) e.getSource()).schedulePane());
+			viewer.scheduleMakerPane(model.getAllCoursesForViewer());
+		}
+
+		else if (e.getMsg().equals(DAY_CHECKBOX_ACTIVATED)){
+			//ONLY FOR TEST !! changeColumnToActiveColor
+			viewer.changeColumnToActiveColor(viewer.getInvokingDayNumber());
+		}
+		else if (e.getMsg().equals(DAY_CHECKBOX_DEACTIVATED)){
+			//ONLY FOR TEST !!
+			viewer.changeColumnToDeactiveColor(viewer.getInvokingDayNumber());
+		}
+		else if (e.getMsg().equals(COURSE_CHECKBOX_ACTIVATED)) {
+			model.addCourseToSchedule(viewer.getInvokingCourseCheckboxes(),0);
+		}
+		else if (e.getMsg().equals(COURSE_ADDED_TO_SCHEDULE)) {
+			viewer.addSlotTOschedule(model.getInokedSlots());
+			viewer.disableAndEnableCoursesCB(model.getImpossibleCourses());
+		}
+		else if (e.getMsg().equals(COURSE_CHECKBOX_DEACTIVATED)) {
+			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());
+		}
+		else if (e.getMsg().equals(COURSE_REMOVED_FROM_SCHEDULE)) {
+			viewer.removeSlotFromschedule(model.getInokedSlots());
 		}
 		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE)) {
 			

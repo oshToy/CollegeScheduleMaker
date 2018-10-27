@@ -1,7 +1,7 @@
 import exceptions.EndingTimeBeforeStartingTimeException;
 
 
-public class Slot implements IDay{
+public class Slot implements IDay,ISlot{
 
 	private IDay.Day day;
 	private int startingTime=0;//check if it between 7-24

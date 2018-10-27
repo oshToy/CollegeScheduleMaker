@@ -2,6 +2,9 @@
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.javafx.scene.layout.region.BorderImageSlices;
 import com.sun.javafx.scene.paint.GradientUtils.Point;
@@ -17,9 +20,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -67,12 +68,20 @@ public class ScheduleJFX implements IView {
 	private CheckBox thursday;
 	private CheckBox friday;
 	
+	
+	//coursesList checkboxes
+	private CourseCheckBox invokingCourseCheckboxes;
+	
 	//days checkboxes
 	private Label []hoursCheckBoxes;
+	private int invokingDayNumber;
 	
 	//shedule buttons
 	private ScheduleButton[][]scheduleButtons;
-	
+
+	//all courses checkboxes
+	private CourseCheckBox[]coursesCheckboxes;
+
 	private  BorderPane mainPane;
 	
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
@@ -86,8 +95,8 @@ public class ScheduleJFX implements IView {
 			setMainPane(courseMenuPane());
 			primaryStage.setScene(mainScene);
 			primaryStage.setAlwaysOnTop(true);
-			primaryStage.setFullScreen(true);
-			primaryStage.setResizable(false);
+			//primaryStage.setFullScreen(true);
+			//primaryStage.setResizable(false);
 			primaryStage.show();
 	}
 	private void init(){
@@ -101,15 +110,17 @@ public class ScheduleJFX implements IView {
 		
 	}
 	
+
 	private void scheduleButtonsUnAvctive(ScheduleButton button) {
 		buttonInvoke =  button;
 		invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE);
 		
 
+
 	}
+	
 	private void doneMakingMakingSingalCourseAction() {
 		invokeListeners(Controller.DONE_CREATE_COURSE_VIEWER);
-
 	}
 	private void makeCourseButtonAction() {
 		invokeListeners(Controller.CREATE_COURSE_VIEWER);
@@ -149,6 +160,39 @@ public class ScheduleJFX implements IView {
 		return topPane;
 	}
 	@Override
+	public void scheduleMakerPane(ICourse[] coursesName) {
+		clearMainPane();
+		setRightPane(schedulePane());
+		setLeftPane(listOfCoursesPane(coursesName));
+	}
+	public Node listOfCoursesPane(ICourse[] coursesInfo) {
+		VBox coursePane=new VBox(10);
+		coursePane.setPadding(new Insets(70));
+		coursesCheckboxes=new CourseCheckBox[coursesInfo.length];
+		int i=0;
+		for (ICourse iCourse : coursesInfo) {
+			coursesCheckboxes[i]=new CourseCheckBox(iCourse.getCourseName(),iCourse.getCourseCode());
+			coursesCheckboxes[i].setOnAction(e->courseCheckBoxAction((CourseCheckBox)e.getSource()));
+			coursePane.getChildren().add(coursesCheckboxes[i]);
+			i++;
+		}
+		return coursePane;
+		
+	}
+
+	private void courseCheckBoxAction(CourseCheckBox courseCB) {
+		invokingCourseCheckboxes=courseCB;
+		if(courseCB.isSelected()){
+			invokeListeners(Controller.COURSE_CHECKBOX_ACTIVATED);
+		}
+		else{
+			invokeListeners(Controller.COURSE_CHECKBOX_DEACTIVATED);
+		}
+	}
+	@Override
+	public CourseCheckBox getInvokingCourseCheckboxes() {
+		return invokingCourseCheckboxes;
+	}
 	public Node schedulePane() {
 		GridPane mainPane = new GridPane();
 		mainPane.setPadding(new Insets(30,30,10,100));
@@ -156,23 +200,23 @@ public class ScheduleJFX implements IView {
 		mainPane.setVgap(7);
 		mainPane.setVgap(18);
 		sunday=new CheckBox(IDay.Day.Sunday.toString());
-		daysTitleUI(sunday);
+		daysTitleInit(sunday);
 		mainPane.add(sunday, 1, 0);
 		monday=new CheckBox(IDay.Day.Monday.toString());
-		daysTitleUI(monday);
+		daysTitleInit(monday);
 		mainPane.add(monday, 2, 0);
 		tuesday=new CheckBox(IDay.Day.Tuesday.toString());
-		daysTitleUI(tuesday);
+		daysTitleInit(tuesday);
 		mainPane.add(tuesday, 3, 0);
 		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
-		daysTitleUI(wednesdaye);
+		daysTitleInit(wednesdaye);
 		wednesdaye.setPadding(new Insets(0,50,0,0));
 		mainPane.add(wednesdaye, 4, 0);
 		thursday=new CheckBox(IDay.Day.Thursday.toString());
-		daysTitleUI(thursday);	
+		daysTitleInit(thursday);	
 		mainPane.add(thursday, 5, 0);
 		friday=new CheckBox(IDay.Day.Friday.toString());
-		daysTitleUI(friday);
+		daysTitleInit(friday);
 		mainPane.add(friday, 6, 0);
 		hoursCheckBoxes=new Label[18];
 		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
@@ -192,8 +236,10 @@ public class ScheduleJFX implements IView {
 			tempButton.setPadding(new Insets(0,15,0,15));
 			tempButton.setMinWidth(150);
 			tempButton.setMinHeight(40);
+
 			tempButton.setOnAction(e -> scheduleButtonsUnAvctive(tempButton));
 			tempButton.setFlag(true);
+
 			scheduleButtons[i][j]=tempButton;
 			
 			
@@ -203,11 +249,26 @@ public class ScheduleJFX implements IView {
 		
 		return mainPane;
 	}
-	private void daysTitleUI(CheckBox dayCheckBox) {
+	private void daysTitleInit(CheckBox dayCheckBox) {
 		dayCheckBox.setPadding(new Insets(0,80,0,0));
 		dayCheckBox.setSelected(true);
 		dayCheckBox.getStyleClass().add("scheduleDays");
+		dayCheckBox.setOnAction(e->dayCheckBoxAction(dayCheckBox));
 		
+	}
+	private void dayCheckBoxAction(CheckBox dayCheckBox) {
+		invokingDayNumber=IDay.intByDay(dayCheckBox.getText());
+		if(dayCheckBox.isSelected()){
+			invokeListeners(Controller.DAY_CHECKBOX_ACTIVATED);
+		}
+		else{
+			invokeListeners(Controller.DAY_CHECKBOX_DEACTIVATED);
+		}
+		
+	}
+	@Override
+	public int getInvokingDayNumber() {
+		return invokingDayNumber;
 	}
 	@Override
 	public Node createNewCoursePane() {
@@ -328,6 +389,16 @@ public class ScheduleJFX implements IView {
 		mainPane.setCenter(Pane);
 		
 	}
+	private void clearMainPane() {
+		mainPane.setCenter(null);
+	}
+	private void setRightPane(Node pane){
+		mainPane.setRight(pane);
+	}
+	private void setLeftPane(Node pane) {
+
+		mainPane.setLeft(pane);
+	}
 	@Override
 	public int getNumberOfSlots() {
 		Integer num = new Integer((String)numberOfSlotsComboBox.getValue());
@@ -408,6 +479,7 @@ private void roomSlotException(int slotNumber){
 	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Room occupied those hours");
 
 }
+
 public void diactiveCollorButton(ScheduleButton button) {
 	button.getStyleClass().clear();
 	button.getStyleClass().add("scheduleButtonUnactive");
@@ -438,5 +510,70 @@ public void changeSceduleButtonUnactive() {
 
 
 
+
+public void activeColorButton(Button button) {
+	button.getStyleClass().clear();
+	button.getStyleClass().add("scheduleButtonActive");
+}
+public boolean isButoonActive(Button button) {
+	if(button.getStylesheets().get(1).equals("scheduleButtonActive")) {
+		return true;
+	}
+	return false;
+	}
+@Override
+public void changeColumnToDeactiveColor(int day){
+	for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
+		deactiveCollorButton(scheduleButtons[day-1][i]);
+	}
+}
+@Override
+public void changeColumnToActiveColor(int day){
+	for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
+		activeColorButton(scheduleButtons[day-1][i]);
+	}
+}
+@Override
+public void addSlotTOschedule(ISlot[] inokedSlots) {
+	for (ISlot iSlot : inokedSlots) {
+		int day=IDay.intByDay(iSlot.getDay().toString())-1;
+		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		for (int i = startColumn; i < endColumn; i++) {
+			scheduleButtons[day][i].setText(invokingCourseCheckboxes.getCourseName());
+		}
+		
+	}
+	
+}
+@Override
+public void removeSlotFromschedule(ISlot[] inokedSlots) {
+	for (ISlot iSlot : inokedSlots) {
+		int day=IDay.intByDay(iSlot.getDay().toString())-1;
+		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		for (int i = startColumn; i < endColumn; i++) {
+			scheduleButtons[day][i].setText("");
+		}
+		
+	}
+	
+}
+@Override
+public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses) {
+		Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
+	    for (ICourse existCourse : impossibleCourses) {
+	    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
+		}
+		for (CourseCheckBox iCourse : coursesCheckboxes) {
+			if(mapOfCourses.get(iCourse.getCourseCode())==null){
+				iCourse.setDisable(true);
+		}
+			else {
+				iCourse.setDisable(false);
+			}
+	}
+	
+}
 
 }

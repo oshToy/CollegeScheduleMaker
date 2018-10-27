@@ -1,7 +1,7 @@
 
 public interface IDay {
 	public enum Day{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday};
-	public static  Day dayByInput(int dayByNum){
+	public static  Day dayByInt(int dayByNum){
 		if(dayByNum == 1){
 			return IDay.Day.Sunday;
 		}
@@ -26,6 +26,31 @@ public interface IDay {
 		
 		return null;
 	}
+	public static  int intByDay(String name){
+		if(name.equals(IDay.Day.Sunday.toString())){
+			return 1;
+		}
+		else if(name.equals(IDay.Day.Monday.toString())){
+			return 2;
+		}
+		else if(name.equals(IDay.Day.Tuesday.toString())){
+			return  3 ;
+		}
+		else if(name.equals(IDay.Day.Wednesday.toString())){
+			return 4;
+		}
+		else if(name.equals(IDay.Day.Thursday.toString())){
+			return 5;
+		}
+		else if(name.equals(IDay.Day.Friday.toString()) ){
+			return 6;
+		}
+		else if(name.equals(IDay.Day.Saturday.toString())){
+			return 7;
+		}
+		
+		return 0;
+	}
 	public static  Day dayByString(String dayByString){
 		if(dayByString.equals("Sunday")){
 			return IDay.Day.Sunday;
@@ -48,6 +73,7 @@ public interface IDay {
 		else if(dayByString.equals("Saturday")){
 			return IDay.Day.Saturday;
 		}
+		
 		
 		return null;
 	}
