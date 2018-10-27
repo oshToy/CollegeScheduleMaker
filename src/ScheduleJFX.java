@@ -480,7 +480,7 @@ private void roomSlotException(int slotNumber){
 
 }
 
-public void diactiveCollorButton(ScheduleButton button) {
+public void deactiveCollorButton(ScheduleButton button) {
 	button.getStyleClass().clear();
 	button.getStyleClass().add("scheduleButtonUnactive");
 	button.setFlag(false);
@@ -498,7 +498,7 @@ public void activeCollorButton(ScheduleButton button) {
 public void changeSceduleButtonUnactive() {
 	if(buttonInvoke.isFlag()) {
 		
-		diactiveCollorButton(buttonInvoke);
+		deactiveCollorButton(buttonInvoke);
 	}
 	else {
 
