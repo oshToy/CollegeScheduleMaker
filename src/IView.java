@@ -1,3 +1,5 @@
+import com.sun.javafx.scene.paint.GradientUtils.Point;
+
 import javafx.scene.Node;
 
 public interface IView {
@@ -19,6 +21,7 @@ public interface IView {
 	void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
 	Node schedulePane();
+	void changeSceduleButtonUnactive();
 
 
 }

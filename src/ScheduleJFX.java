@@ -4,6 +4,7 @@
 import java.util.ArrayList;
 
 import com.sun.javafx.scene.layout.region.BorderImageSlices;
+import com.sun.javafx.scene.paint.GradientUtils.Point;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,6 +35,8 @@ public class ScheduleJFX implements IView {
 	public static final String DEFAULT_SLOTS_AMOUNT="1";
 	private static final double DEFAULT_PADDING = 10;
 	
+	//location of the button that invoke action 
+	private ScheduleButton buttonInvoke ;
 	
 	//course  input
 	private TextField courseId;
@@ -68,7 +71,7 @@ public class ScheduleJFX implements IView {
 	private Label []hoursCheckBoxes;
 	
 	//shedule buttons
-	private Button[][]scheduleButtons;
+	private ScheduleButton[][]scheduleButtons;
 	
 	private  BorderPane mainPane;
 	
@@ -98,8 +101,10 @@ public class ScheduleJFX implements IView {
 		
 	}
 	
-	private void scheduleButtonsUnAvctive() {
-		invokeListeners(Controller.SCHEDULE_BUTTON_UN_ACTIVE);
+	private void scheduleButtonsUnAvctive(ScheduleButton button) {
+		buttonInvoke =  button;
+		invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE);
+		
 
 	}
 	private void doneMakingMakingSingalCourseAction() {
@@ -177,18 +182,21 @@ public class ScheduleJFX implements IView {
 			hoursCheckBoxes[i-INITIAL_HOUR_OF_SCHEDULE]=tempHourBox;
 			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1,1,1);
 		}
-		scheduleButtons=new Button[6][LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE];
+		scheduleButtons=new ScheduleButton[6][LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE];
+		
 				
 		for (int i=0;i<6;i++){
 			for(int j=0;j<LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE;j++){
-			Button tempButton=new Button();
+		    ScheduleButton tempButton=new ScheduleButton();
 			tempButton.getStyleClass().add("scheduleButtonActive");
 			tempButton.setPadding(new Insets(0,15,0,15));
 			tempButton.setMinWidth(150);
 			tempButton.setMinHeight(40);
-			System.out.println(tempButton.getStyleClass().get(1));
-			scheduleButtons [i][j].setOnAction(e -> scheduleButtonsUnAvctive());
+			tempButton.setOnAction(e -> scheduleButtonsUnAvctive(tempButton));
+			tempButton.setFlag(true);
 			scheduleButtons[i][j]=tempButton;
+			
+			
 			mainPane.add(tempButton,i+1,j+1);
 			}
 		}
@@ -400,20 +408,35 @@ private void roomSlotException(int slotNumber){
 	slotComboBoxandTextField[slotNumber].getLecturerName().setText("Room occupied those hours");
 
 }
-public void diactiveCollorButton(Button button) {
-	button.getStylesheets().clear();
-	button.getStylesheets().add("scheduleButtonUnactive");
+public void diactiveCollorButton(ScheduleButton button) {
+	button.getStyleClass().clear();
+	button.getStyleClass().add("scheduleButtonUnactive");
+	button.setFlag(false);
+	System.out.println("UN_Active");
 }
 
-public void activeCollorButton(Button button) {
-	button.getStylesheets().clear();
-	button.getStylesheets().add("scheduleButtonActive");
+public void activeCollorButton(ScheduleButton button) {
+	button.getStyleClass().clear();
+	button.getStyleClass().add("scheduleButtonActive");
+	button.setFlag(true);
+	System.out.println("activvv");
 }
-public boolean isButoonActive(Button button) {
-	if(button.getStylesheets().get(1).equals("scheduleButtonActive")) {
-		return true;
+
+@Override
+public void changeSceduleButtonUnactive() {
+	if(buttonInvoke.isFlag()) {
+		
+		diactiveCollorButton(buttonInvoke);
 	}
-	return false;
+	else {
+
+		activeCollorButton(buttonInvoke);
 	}
+}
+
+
+
+
+
 
 }
