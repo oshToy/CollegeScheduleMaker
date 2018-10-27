@@ -3,6 +3,8 @@
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.javafx.scene.layout.region.BorderImageSlices;
 
@@ -149,15 +151,15 @@ public class ScheduleJFX implements IView {
 		return topPane;
 	}
 	@Override
-	public void scheduleMakerPane(Collection<ICourse> coursesName) {
+	public void scheduleMakerPane(ICourse[] coursesName) {
 		clearMainPane();
 		setRightPane(schedulePane());
 		setLeftPane(listOfCoursesPane(coursesName));
 	}
-	public Node listOfCoursesPane(Collection<ICourse> coursesInfo) {
+	public Node listOfCoursesPane(ICourse[] coursesInfo) {
 		VBox coursePane=new VBox(10);
 		coursePane.setPadding(new Insets(70));
-		coursesCheckboxes=new CourseCheckBox[coursesInfo.size()];
+		coursesCheckboxes=new CourseCheckBox[coursesInfo.length];
 		int i=0;
 		for (ICourse iCourse : coursesInfo) {
 			coursesCheckboxes[i]=new CourseCheckBox(iCourse.getCourseName(),iCourse.getCourseCode());
@@ -492,17 +494,43 @@ public void changeColumnToActiveColor(int day){
 }
 @Override
 public void addSlotTOschedule(ISlot[] inokedSlots) {
-	// TODO Auto-generated method stub
 	for (ISlot iSlot : inokedSlots) {
 		int day=IDay.intByDay(iSlot.getDay().toString())-1;
 		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
 		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
-		System.out.println(day);
-		System.out.println(startColumn+" - "+endColumn);
 		for (int i = startColumn; i < endColumn; i++) {
 			scheduleButtons[day][i].setText(invokingCourseCheckboxes.getCourseName());
 		}
 		
+	}
+	
+}
+@Override
+public void removeSlotFromschedule(ISlot[] inokedSlots) {
+	for (ISlot iSlot : inokedSlots) {
+		int day=IDay.intByDay(iSlot.getDay().toString())-1;
+		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
+		for (int i = startColumn; i < endColumn; i++) {
+			scheduleButtons[day][i].setText("");
+		}
+		
+	}
+	
+}
+@Override
+public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses) {
+		Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
+	    for (ICourse existCourse : impossibleCourses) {
+	    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
+		}
+		for (CourseCheckBox iCourse : coursesCheckboxes) {
+			if(mapOfCourses.get(iCourse.getCourseCode())==null){
+				iCourse.setDisable(true);
+		}
+			else {
+				iCourse.setDisable(false);
+			}
 	}
 	
 }

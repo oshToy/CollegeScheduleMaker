@@ -169,54 +169,11 @@ public class Main extends Application{
 		 System.out.println(loz.getCourseOfSchedule());
 		 System.out.println(loz.timeValidSlots(arrayOfCourse, 1, 0));
 
-		 AllCourses allCourses=new AllCourses();
-		 try {
-			allCourses.addCourse(1,"algebra",2);
-			allCourses.addCourse(2,"math",1);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 try {
-			allCourses.addShow(1, 0, 2);
-			allCourses.addShow(1, 1, 2);
-			allCourses.addShow(2, 0, 1);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 try {
-			allCourses.addSlot(1, 0, 0,IDay.Day.Sunday, 10, 15, 101, "Yossi");
-			allCourses.addSlot(1, 0, 1,IDay.Day.Monday, 13, 18, 101, "Yossi");
-			
-			allCourses.addSlot(1, 1, 0,IDay.Day.Sunday, 15,20, 103, "Yoni");
-			allCourses.addSlot(1, 1, 1,IDay.Day.Monday, 15,18, 104, "Yossi");
-			
-			allCourses.addSlot(2, 0, 0,IDay.Day.Tuesday, 17, 18, 105, "momo");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		 
 		  
 
-		for (Course tempCourse : allCourses.getArrayOfCourse()) {
-				System.out.println(tempCourse);
-				
-				
-			}
-		 System.out.println("schedule !!!!\n");
-		 Schedule loz=new Schedule();
-		 try {
-			loz.addCourseToSchedule(allCourses.getCourseById(1), 0);
-			 System.out.println(loz.timeValidSlots(allCourses.getCourseById(1), 1));
-			loz.addCourseToSchedule(allCourses.getCourseById(1), 1);
-			 System.out.println(loz.getCourseOfSchedule());
-			 System.out.println(loz.timeValidSlots(allCourses.getCourseById(2), 0));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		 */
 
 		

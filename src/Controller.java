@@ -25,11 +25,12 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String COURSE_CHECKBOX_ACTIVATED = "courseCB activated";
 	public static final String COURSE_CHECKBOX_DEACTIVATED = "courseCB deactivated";
 	public static final String COURSE_ADDED_TO_SCHEDULE = "course add to schedule";
+	public static final String COURSE_REMOVED_FROM_SCHEDULE = "course remove from schedule";
 
 	
 	private IView viewer;
 	private IModel model;
-
+	private boolean testing=true;	//TODO FOR TESTING ONLY!!!
 	public Controller(IModel model) {
 		this.model = model;
 		model.registerListener(this);
@@ -37,6 +38,11 @@ public class Controller implements EventHandler<MyActionEvent> {
 	@Override
 	public void handle(MyActionEvent e) {
 		
+		//TODO FOR TESTING ONLY!!!
+		if(testing==true){
+		TestScheduleInsert.testSchedule(model.getModelForTestingOnly());
+		testing=false;
+		}
 		if (e.getMsg().equals(DONE_CREATE_COURSE_VIEWER)) {
 			createNewCourse((IView) e.getSource());
 		}
@@ -82,7 +88,7 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(DONE_CREATE_ALL_COURSES_VIEWER)){
 			//ONLY FOR TEST !!
-			viewer.scheduleMakerPane(model.getAllCourses());
+			viewer.scheduleMakerPane(model.getAllCoursesForViewer());
 		}
 
 		else if (e.getMsg().equals(DAY_CHECKBOX_ACTIVATED)){
@@ -98,6 +104,13 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(COURSE_ADDED_TO_SCHEDULE)) {
 			viewer.addSlotTOschedule(model.getInokedSlots());
+			viewer.disableAndEnableCoursesCB(model.getImpossibleCourses());
+		}
+		else if (e.getMsg().equals(COURSE_CHECKBOX_DEACTIVATED)) {
+			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());
+		}
+		else if (e.getMsg().equals(COURSE_REMOVED_FROM_SCHEDULE)) {
+			viewer.removeSlotFromschedule(model.getInokedSlots());
 		}
 	}
 

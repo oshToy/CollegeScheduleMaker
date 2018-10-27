@@ -15,9 +15,28 @@ public class Model implements IModel {
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
 	private AllCourses allCourses = new AllCourses();
 	private Schedule schedule = new Schedule();
+	
+	
+	
+	//TODO FOR TESTING ONLY!!!
+	@Override
+	public Model getModelForTestingOnly() {
+			return this;
+	}
+
+	//TODO FOR TESTING ONLY!!!
+	public AllCourses getAllCoursesForTestingOnly() {
+		return allCourses;
+	}
+	//TODO FOR TESTING ONLY!!!
+	public Schedule getScheduleForTestingOnly() {
+		return schedule;
+	}
+
 	private int ivokingSlotNumber;
 	private int showNumber;
 	private ISlot[] inokedSlots;
+	
 
 	public int getShowNumber() {
 		return showNumber;
@@ -130,8 +149,10 @@ public class Model implements IModel {
 		}
 	}
 	@Override
-	public Collection<ICourse> getAllCourses() {
-		return allCourses.getMapOfCourse().values();
+	public ICourse[] getAllCoursesForViewer() {
+		 ICourse[] collection = new ICourse[allCourses.getMapOfCourse().size()];
+		 allCourses.getMapOfCourse().values().toArray(collection);
+		return collection;
 	}
 	@Override
 	public void addCourseToSchedule(ICourse wantedCourse, int showCode) {
@@ -140,7 +161,6 @@ public class Model implements IModel {
 			schedule.addCourseToSchedule(allCourses.getCourseById(wantedCourse.getCourseCode()), showCode);
 			inokedSlots=new ISlot[allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().size()];
 			allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().toArray(inokedSlots);
-			System.out.println(schedule.getCourseOfSchedule().values());
 			invokeListeners(Controller.COURSE_ADDED_TO_SCHEDULE);
 		} catch (courseNotExistException e) {
 			// TODO Auto-generated catch block
@@ -152,6 +172,32 @@ public class Model implements IModel {
 	public ISlot[] getInokedSlots() {
 		return inokedSlots;
 	}
+
+	@Override
+	public void removeCourseFromSchedule(ICourse wantedCourse) {
+		try {
+			inokedSlots=new ISlot[allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().size()];
+			allCourses.getCourseById(wantedCourse.getCourseCode()).getLonleyShow().getSlots().toArray(inokedSlots);
+			schedule.removeCourseFromSchedule(allCourses.getCourseById(wantedCourse.getCourseCode()));
+
+			invokeListeners(Controller.COURSE_REMOVED_FROM_SCHEDULE);
+		} catch (courseNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public ArrayList<ICourse> getImpossibleCourses(){
+		ArrayList<ICourse> impossibleCourses=new ArrayList<>();
+		for (Course checkCourse : allCourses.getMapOfCourse().values()) {
+				if(schedule.timeValidSlots(checkCourse,0)==false){
+					impossibleCourses.add(checkCourse);
+			}
+		}
+		return impossibleCourses;
+	}
+
 
 
 }

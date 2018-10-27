@@ -1,4 +1,5 @@
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.event.Event;
@@ -10,8 +11,14 @@ public interface IModel {
 	public void createNewShow(int courseCode, String[][] strings);
 	int getIvokingSlotNumber();
 	void setShowNumberPlusOne(int courseCode);
-	public Collection<ICourse> getAllCourses();
+	public ICourse[] getAllCoursesForViewer();
 	public void addCourseToSchedule(ICourse wantedCourse,int showCode);
 	ISlot[] getInokedSlots();
+	public void removeCourseFromSchedule(ICourse invokingCourseCheckboxes);
+
+	//TODO FOR TESTING ONLY!!!
+	public Model getModelForTestingOnly();
+	ArrayList<ICourse> getImpossibleCourses();
+
 
 }

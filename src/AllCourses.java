@@ -9,7 +9,7 @@ import exceptions.TeacherTeachingException;
 import exceptions.courseNotExistException;
 
 public class AllCourses {
-	private Map  <Integer,ICourse> mapOfCourses;
+	private Map  <Integer,Course> mapOfCourses;
 	
 	public AllCourses(){
 		this.mapOfCourses=new HashMap<>();
@@ -47,7 +47,7 @@ public class AllCourses {
 		Course wantedCourse = getCourseById(courseId);
 		wantedCourse.getShows().put(showCode, show);
 	}
-	public Map  <Integer,ICourse> getMapOfCourse() {
+	public Map  <Integer,Course> getMapOfCourse() {
 		return mapOfCourses;
 	}
 	public void addSlot(int courseId,int numOfShow,int numOfSlot,IDay.Day day,int startingTime,int endingTime,int numberOfRoom,String nameOfLect) throws RoomFullException, TeacherTeachingException, EndingTimeBeforeStartingTimeException, courseNotExistException {
@@ -59,7 +59,6 @@ public class AllCourses {
 			throw new TeacherTeachingException("Teacher teaching those hours");  
 		}
 		Course wantedCourse = getCourseById(courseId);
-		//wantedCourse.getShows()[numOfShow].getSlots().add(newSlot);
 		wantedCourse.getShows().get(numOfShow).getSlots().add(newSlot);
 	}
 	@Override

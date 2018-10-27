@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.scene.Node;
@@ -20,12 +21,14 @@ public interface IView {
 	public void roomFullException(int slotNumber);
 	public void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
-	public void scheduleMakerPane(Collection<ICourse> coursesName);
+	public void scheduleMakerPane(ICourse[] coursesName);
 	void changeColumnToDeactiveColor(int coulmn);
 	int getInvokingDayNumber();
 	void changeColumnToActiveColor(int coulmn);
 	CourseCheckBox getInvokingCourseCheckboxes();
 	public void addSlotTOschedule(ISlot[] iSlots);
+	public void removeSlotFromschedule(ISlot[] inokedSlots);
+	public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses);
 
 
 }

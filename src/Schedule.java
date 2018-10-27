@@ -16,12 +16,11 @@ public class Schedule implements IDay {
 	public void addCourseToSchedule(Course wantedCourse,int showCode) {
 				if(timeValidSlots(wantedCourse,showCode)==true){
 					Course course=new Course(wantedCourse.getCourseCode(),wantedCourse.getCourseName());
-					System.out.println(wantedCourse.getShowByShowCourse(showCode));
 					course.getShows().put(showCode,wantedCourse.getShowByShowCourse(showCode));
 					courseOfSchedule.put(wantedCourse.getCourseCode(),course);
 					}
 	}
-	//public removeCourseFromSchedule(c)//TODO
+
 	public Map  <Integer,Course> getCourseOfSchedule() {
 		return courseOfSchedule;
 	}
@@ -39,6 +38,10 @@ public class Schedule implements IDay {
 							}
 								}
 		return true;
+	}
+	public void removeCourseFromSchedule(Course wantedCourse) {
+		courseOfSchedule.remove(wantedCourse.getCourseCode());
+		
 	}
 
 
