@@ -1,3 +1,6 @@
+
+import com.sun.javafx.scene.paint.GradientUtils.Point;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,6 +24,10 @@ public interface IView {
 	public void roomFullException(int slotNumber);
 	public void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
+
+	Node schedulePane();
+	void changeSceduleButtonUnactive();
+
 	public void scheduleMakerPane(ICourse[] coursesName);
 	void changeColumnToDeactiveColor(int coulmn);
 	int getInvokingDayNumber();
@@ -29,6 +36,7 @@ public interface IView {
 	public void addSlotTOschedule(ISlot[] iSlots);
 	public void removeSlotFromschedule(ISlot[] inokedSlots);
 	public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses);
+
 
 
 }

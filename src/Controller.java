@@ -19,9 +19,9 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String ROOM_FULL_EROOR = "ROOM_FULL_EROOR";
 	public static final String TEACHER_ALREADY_TEACHING_ERROR = "TEACHER_ALREADY_TEACHING_ERROR";
 	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
+	public static final String SCHEDULE_BUTTON_UNACTIVE = " schedule button is changed from/to active";
 	public static final String DAY_CHECKBOX_ACTIVATED = "day checkbox activated";
 	public static final String DAY_CHECKBOX_DEACTIVATED = "day checkbox deactivated";
-	public static final String SCHEDULE_BUTTON_UN_ACTIVE = " schedule button is changed from/to active";
 	public static final String COURSE_CHECKBOX_ACTIVATED = "courseCB activated";
 	public static final String COURSE_CHECKBOX_DEACTIVATED = "courseCB deactivated";
 	public static final String COURSE_ADDED_TO_SCHEDULE = "course add to schedule";
@@ -111,6 +111,10 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(COURSE_REMOVED_FROM_SCHEDULE)) {
 			viewer.removeSlotFromschedule(model.getInokedSlots());
+		}
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE)) {
+			
+			viewer.changeSceduleButtonUnactive();
 		}
 	}
 
