@@ -26,6 +26,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String COURSE_CHECKBOX_DEACTIVATED = "courseCB deactivated";
 	public static final String COURSE_ADDED_TO_SCHEDULE = "course add to schedule";
 	public static final String COURSE_REMOVED_FROM_SCHEDULE = "course remove from schedule";
+	public static final String CREATE_ANOTHER_SHOW_VIEWER = "create another show viewer";
+	public static final String CREATE_ANOTHER_SHOW_MODEL = "create another show model";
 
 	
 	private IView viewer;
@@ -37,7 +39,6 @@ public class Controller implements EventHandler<MyActionEvent> {
 	}
 	@Override
 	public void handle(MyActionEvent e) {
-		
 		//TODO FOR TESTING ONLY!!!
 		if(testing==true){
 		TestScheduleInsert.testSchedule(model.getModelForTestingOnly());
@@ -49,13 +50,11 @@ public class Controller implements EventHandler<MyActionEvent> {
 		else if (e.getMsg().equals(DONE_CREATE_SHOW_VIEWER)) {
 			int numberOfSlots = viewer.getNumberOfSlots();
 			(viewer).setMainPane(viewer.createNewSlotPane(numberOfSlots));
-			model.setShowNumberPlusOne(viewer.getCreatingCourseCode());
 		}
 		else if (e.getMsg().equals(DONE_CREATE_SLOTS_VIEWER)) {
 			createNewShow((IView) e.getSource());
 		}
 		else if (e.getMsg().equals(DONE_CREATE_COURSE_MODEL)) {
-
 			viewer.setMainPane(viewer.createNewShowPane(Model.toIntFromString(viewer.getCourseInput()[0])));
 
 		} else if (e.getMsg().equals(CREATE_COURSE_VIEWER)) {
@@ -100,24 +99,38 @@ public class Controller implements EventHandler<MyActionEvent> {
 			viewer.changeColumnToDeactiveColor(viewer.getInvokingDayNumber());
 		}
 		else if (e.getMsg().equals(COURSE_CHECKBOX_ACTIVATED)) {
-			model.addCourseToSchedule(viewer.getInvokingCourseCheckboxes(),0);
+			model.addCourseToSchedule(viewer.getInvokingCourseCheckboxes());
 		}
 		else if (e.getMsg().equals(COURSE_ADDED_TO_SCHEDULE)) {
 			viewer.addSlotTOschedule(model.getInokedSlots());
 			viewer.disableAndEnableCoursesCB(model.getImpossibleCourses());
 		}
-		else if (e.getMsg().equals(COURSE_CHECKBOX_DEACTIVATED)) {
-			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());
-		}
 		else if (e.getMsg().equals(COURSE_REMOVED_FROM_SCHEDULE)) {
 			viewer.removeSlotFromschedule(model.getInokedSlots());
+			viewer.disableAndEnableCoursesCB(model.getImpossibleCourses());
 		}
-		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE)) {
+		else if (e.getMsg().equals(COURSE_CHECKBOX_DEACTIVATED)) {
 			
+			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());
+			
+		}
+
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE)) {
 			viewer.changeSceduleButtonUnactive();
 		}
+		else if (e.getMsg().equals(CREATE_ANOTHER_SHOW_VIEWER)) {
+			createAnotherShow((IView) e.getSource());
+		}
+		else if (e.getMsg().equals(CREATE_ANOTHER_SHOW_MODEL)) {
+			viewer.setMainPane(viewer.createNewShowPane(Model.toIntFromString(viewer.getCourseInput()[0])));
+		}
 	}
+	
 
+	private void createAnotherShow(IView source) {
+		model.createAnotherShow(source.getCreatingCourseCode(),source.getSlotsInput());
+		
+	}
 	private void createNewShow(IView source) {
 		model.createNewShow(source.getCreatingCourseCode(),source.getSlotsInput());
 	}

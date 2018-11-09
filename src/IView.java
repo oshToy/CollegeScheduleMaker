@@ -25,7 +25,6 @@ public interface IView {
 	public void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
 
-	Node schedulePane();
 	void changeSceduleButtonUnactive();
 
 	public void scheduleMakerPane(ICourse[] coursesName);

@@ -15,9 +15,16 @@ public class Schedule implements IDay {
 	}
 	public void addCourseToSchedule(Course wantedCourse,int showCode) {
 				if(timeValidSlots(wantedCourse,showCode)==true){
-					Course course=new Course(wantedCourse.getCourseCode(),wantedCourse.getCourseName());
-					course.getShows().put(showCode,wantedCourse.getShowByShowCourse(showCode));
+					Course course=null;
+					if(courseOfSchedule.containsKey(wantedCourse)==false){
+					course=new Course(wantedCourse.getCourseCode(),wantedCourse.getCourseName());
 					courseOfSchedule.put(wantedCourse.getCourseCode(),course);
+					}
+					else{
+						course=courseOfSchedule.get(wantedCourse);
+					}
+					course.getShows().put(showCode,wantedCourse.getShowByShowCourse(showCode));
+					
 					}
 	}
 

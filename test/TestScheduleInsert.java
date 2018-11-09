@@ -22,7 +22,9 @@ public class TestScheduleInsert {
 			}
 			 try {
 				allCourses.addShow(1, 0);
-				//allCourses.addShow(1, 1);
+				allCourses.addShow(1, 1);
+				allCourses.addShow(1, 2);
+				allCourses.addShow(1, 3);
 				allCourses.addShow(2, 0);
 				allCourses.addShow(3, 0);
 				allCourses.addShow(4, 0);
@@ -36,8 +38,15 @@ public class TestScheduleInsert {
 				allCourses.addSlot(1, 0, 0,IDay.Day.Sunday, 10, 15, 101, "Yossi");
 				allCourses.addSlot(1, 0, 1,IDay.Day.Monday, 13, 18, 102, "Yossi");
 				
-				//allCourses.addSlot(1, 1, 0,IDay.Day.Sunday, 15,20, 103, "Yoni");
-				//allCourses.addSlot(1, 1, 1,IDay.Day.Monday, 15,18, 104, "Yoni");
+				allCourses.addSlot(1, 1, 0,IDay.Day.Sunday, 15,20, 103, "Yoni");
+				allCourses.addSlot(1, 1, 1,IDay.Day.Monday, 18,20, 104, "Yoni");
+				
+				allCourses.addSlot(1, 2, 0,IDay.Day.Sunday, 19,20, 1011, "yoyoyo");
+				allCourses.addSlot(1, 2, 1,IDay.Day.Wednesday, 18,20, 1123, "yoyoyoyo");
+				
+				allCourses.addSlot(1, 3, 0,IDay.Day.Wednesday, 15,18, 103, "Yoni");
+				allCourses.addSlot(1, 3, 1,IDay.Day.Friday, 18,20, 104, "Yoni");
+				
 				
 				allCourses.addSlot(2, 0, 0,IDay.Day.Tuesday, 15, 18, 103, "momo");
 				

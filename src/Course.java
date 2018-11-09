@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Course implements ICourse {
 
@@ -14,14 +15,18 @@ public class Course implements ICourse {
 
 	// private Show[] mapOfShows;
 	private Map<Integer, Show> mapOfShows;
-
+	
+		
 	public Course(int courseCode, String name) {
 		this.courseCode = courseCode;
 		this.name = name;
 		mapOfShows = new HashMap();
 
 	}
-
+	@Override
+	public Set<Integer> getShowCodes(){
+		return mapOfShows.keySet();
+	}
 	@Override
 	public int getCourseCode() {
 		return courseCode;

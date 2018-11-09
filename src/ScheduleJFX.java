@@ -4,6 +4,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.sun.javafx.scene.layout.region.BorderImageSlices;
@@ -29,13 +30,13 @@ import javafx.stage.Stage;
 
 public class ScheduleJFX implements IView {
 	public static final int INITIAL_HOUR_OF_SCHEDULE=7;
-	public static final int LAST_HOUR_OF_SCHEDULE=24;
+	public static final int LAST_HOUR_OF_SCHEDULE=22;
 	public static final int NUMBER_OF_INPUTS_PER_COURSE=3;
 	public static final int NUMBER_OF_INPUTS_PER_SHOW=1;
 	public static final int NUMBER_OF_INPUTS_PER_SLOT=5;
 	public static final String DEFAULT_SLOTS_AMOUNT="1";
 	private static final double DEFAULT_PADDING = 10;
-	
+	private ScheduleJFXPartTwo schedule=new ScheduleJFXPartTwo();
 	//location of the button that invoke action 
 	private ScheduleButton buttonInvoke ;
 	
@@ -52,11 +53,13 @@ public class ScheduleJFX implements IView {
 
 	
 	//buttons
-	private Button btnMakeCourse=new Button("Create course !");;
-	private Button btnDoneMakingCourses=new Button("I'm done create all courses !");
-	private Button btnDoneMakingSingalCourse=new Button("I'm done Create course !");
-	private Button btnDoneMakingShow=new Button("I'm done create show!");
-	private Button btnDoneMakingSlot=new Button("I'm done create slots!");
+	private Button btnMakeCourse=new Button("Create new course");;
+	private Button btnDoneMakingCourses=new Button("Create schedule by courses");
+	private Button btnDoneMakingSingalCourse=new Button("Done");
+	private Button btnDoneMakingShow=new Button("Done");
+	private Button btnDoneMakingAnotherShow=new Button("Create another show of the course");
+	private Button btnDoneMakingSlot=new Button("Done");
+	
 	
 	
 	
@@ -101,6 +104,7 @@ public class ScheduleJFX implements IView {
 	}
 	private void init(){
 		registerListener(Main.createController(this));
+		btnDoneMakingAnotherShow.setOnAction(e -> createAnotheShow());
 		btnMakeCourse.setOnAction(e -> makeCourseButtonAction());
 		btnDoneMakingCourses.setOnAction(e -> doneMakingCoursesButtonAction());
 		btnDoneMakingSingalCourse.setOnAction(e -> doneMakingMakingSingalCourseAction());
@@ -111,15 +115,17 @@ public class ScheduleJFX implements IView {
 	}
 	
 
+	private void createAnotheShow() {
+		invokeListeners(Controller.CREATE_ANOTHER_SHOW_VIEWER);
+	}
 	private void scheduleButtonsUnAvctive(ScheduleButton button) {
 		buttonInvoke =  button;
 		invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE);
-		
-
 
 	}
 	
 	private void doneMakingMakingSingalCourseAction() {
+		
 		invokeListeners(Controller.DONE_CREATE_COURSE_VIEWER);
 	}
 	private void makeCourseButtonAction() {
@@ -162,23 +168,10 @@ public class ScheduleJFX implements IView {
 	@Override
 	public void scheduleMakerPane(ICourse[] coursesName) {
 		clearMainPane();
-		setRightPane(schedulePane());
-		setLeftPane(listOfCoursesPane(coursesName));
+		setRightPane(schedule.schedulePane());
+		setLeftPane(schedule.listOfCoursesPane(coursesName));
 	}
-	public Node listOfCoursesPane(ICourse[] coursesInfo) {
-		VBox coursePane=new VBox(10);
-		coursePane.setPadding(new Insets(70));
-		coursesCheckboxes=new CourseCheckBox[coursesInfo.length];
-		int i=0;
-		for (ICourse iCourse : coursesInfo) {
-			coursesCheckboxes[i]=new CourseCheckBox(iCourse.getCourseName(),iCourse.getCourseCode());
-			coursesCheckboxes[i].setOnAction(e->courseCheckBoxAction((CourseCheckBox)e.getSource()));
-			coursePane.getChildren().add(coursesCheckboxes[i]);
-			i++;
-		}
-		return coursePane;
-		
-	}
+	
 
 	private void courseCheckBoxAction(CourseCheckBox courseCB) {
 		invokingCourseCheckboxes=courseCB;
@@ -193,62 +186,7 @@ public class ScheduleJFX implements IView {
 	public CourseCheckBox getInvokingCourseCheckboxes() {
 		return invokingCourseCheckboxes;
 	}
-	public Node schedulePane() {
-		GridPane mainPane = new GridPane();
-		mainPane.setPadding(new Insets(30,30,10,100));
-		mainPane.setMinSize(1080, 720); 
-		mainPane.setVgap(7);
-		mainPane.setVgap(18);
-		sunday=new CheckBox(IDay.Day.Sunday.toString());
-		daysTitleInit(sunday);
-		mainPane.add(sunday, 1, 0);
-		monday=new CheckBox(IDay.Day.Monday.toString());
-		daysTitleInit(monday);
-		mainPane.add(monday, 2, 0);
-		tuesday=new CheckBox(IDay.Day.Tuesday.toString());
-		daysTitleInit(tuesday);
-		mainPane.add(tuesday, 3, 0);
-		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
-		daysTitleInit(wednesdaye);
-		wednesdaye.setPadding(new Insets(0,50,0,0));
-		mainPane.add(wednesdaye, 4, 0);
-		thursday=new CheckBox(IDay.Day.Thursday.toString());
-		daysTitleInit(thursday);	
-		mainPane.add(thursday, 5, 0);
-		friday=new CheckBox(IDay.Day.Friday.toString());
-		daysTitleInit(friday);
-		mainPane.add(friday, 6, 0);
-		hoursCheckBoxes=new Label[18];
-		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
-			Label tempHourBox=new Label(i+" - "+(i+1));
-			tempHourBox.setPadding(new Insets(0,20,0,0));
-			tempHourBox.getStyleClass().add("scheduleTime");
-			hoursCheckBoxes[i-INITIAL_HOUR_OF_SCHEDULE]=tempHourBox;
-			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1,1,1);
-		}
-		scheduleButtons=new ScheduleButton[6][LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE];
-		
-				
-		for (int i=0;i<6;i++){
-			for(int j=0;j<LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE;j++){
-		    ScheduleButton tempButton=new ScheduleButton();
-			tempButton.getStyleClass().add("scheduleButtonActive");
-			tempButton.setPadding(new Insets(0,15,0,15));
-			tempButton.setMinWidth(150);
-			tempButton.setMinHeight(40);
 
-			tempButton.setOnAction(e -> scheduleButtonsUnAvctive(tempButton));
-			tempButton.setFlag(true);
-
-			scheduleButtons[i][j]=tempButton;
-			
-			
-			mainPane.add(tempButton,i+1,j+1);
-			}
-		}
-		
-		return mainPane;
-	}
 	private void daysTitleInit(CheckBox dayCheckBox) {
 		dayCheckBox.setPadding(new Insets(0,80,0,0));
 		dayCheckBox.setSelected(true);
@@ -346,8 +284,10 @@ public class ScheduleJFX implements IView {
 			slotPane.getChildren().add(slotInputPane);
 			
 		}
-		
-		slotPane.getChildren().add(btnDoneMakingSlot);
+		HBox buttonPane=new HBox(20);
+		buttonPane.getChildren().add(btnDoneMakingSlot);
+		buttonPane.getChildren().add(btnDoneMakingAnotherShow);
+		slotPane.getChildren().add(buttonPane);
 		return slotPane;
 	}
 
@@ -375,8 +315,7 @@ public class ScheduleJFX implements IView {
 			        "Tuesday",
 			        "Wednesday",
 			        "Thursday",
-			        "Friday",
-			        "Saturday"
+			        "Friday"
 			    );
 		return dayOptions;
 	}
@@ -480,98 +419,210 @@ private void roomSlotException(int slotNumber){
 
 }
 
-public void deactiveCollorButton(ScheduleButton button) {
-	button.getStyleClass().clear();
-	button.getStyleClass().add("scheduleButtonUnactive");
-	button.setFlag(false);
-}
 
-public void activeCollorButton(ScheduleButton button) {
-	button.getStyleClass().clear();
-	button.getStyleClass().add("scheduleButtonActive");
-	button.setFlag(true);
-}
+class ScheduleJFXPartTwo{
+	protected Node schedulePane() {
+		GridPane mainPane = new GridPane();
+		mainPane.setPadding(new Insets(30,30,10,100));
+		mainPane.setMinSize(1080, 720); 
+		mainPane.setVgap(7);
+		mainPane.setVgap(18);
+		sunday=new CheckBox(IDay.Day.Sunday.toString());
+		daysTitleInit(sunday);
+		mainPane.add(sunday, 1, 0);
+		monday=new CheckBox(IDay.Day.Monday.toString());
+		daysTitleInit(monday);
+		mainPane.add(monday, 2, 0);
+		tuesday=new CheckBox(IDay.Day.Tuesday.toString());
+		daysTitleInit(tuesday);
+		mainPane.add(tuesday, 3, 0);
+		wednesdaye=new CheckBox(IDay.Day.Wednesday.toString());
+		daysTitleInit(wednesdaye);
+		wednesdaye.setPadding(new Insets(0,50,0,0));
+		mainPane.add(wednesdaye, 4, 0);
+		thursday=new CheckBox(IDay.Day.Thursday.toString());
+		daysTitleInit(thursday);	
+		mainPane.add(thursday, 5, 0);
+		friday=new CheckBox(IDay.Day.Friday.toString());
+		daysTitleInit(friday);
+		mainPane.add(friday, 6, 0);
+		hoursCheckBoxes=new Label[18];
+		for (int i = INITIAL_HOUR_OF_SCHEDULE; i < LAST_HOUR_OF_SCHEDULE; i++) {
+			Label tempHourBox=new Label(i+" - "+(i+1));
+			tempHourBox.setPadding(new Insets(0,20,0,0));
+			tempHourBox.getStyleClass().add("scheduleTime");
+			hoursCheckBoxes[i-INITIAL_HOUR_OF_SCHEDULE]=tempHourBox;
+			mainPane.add(tempHourBox, 0, i-INITIAL_HOUR_OF_SCHEDULE+1,1,1);
+		}
+		scheduleButtons=new ScheduleButton[6][LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE];
+			
+		for (int i=0;i<6;i++){
+			for(int j=0;j<LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE;j++){
+		    ScheduleButton tempButton=new ScheduleButton();
+			tempButton.getStyleClass().add("scheduleButtonActive");
+			tempButton.setPadding(new Insets(0,15,0,15));
+			tempButton.setMinWidth(150);
+			tempButton.setMinHeight(40);
 
-@Override
-public void changeSceduleButtonUnactive() {
-	if(buttonInvoke.isFlag()) {
+			tempButton.setOnAction(e -> scheduleButtonsUnAvctive(tempButton));
+			tempButton.setFlag(true);
+
+			scheduleButtons[i][j]=tempButton;
+			
+			
+			mainPane.add(tempButton,i+1,j+1);
+			}
+		}
 		
-		deactiveCollorButton(buttonInvoke);
+		return mainPane;
 	}
-	else {
-
-		activeCollorButton(buttonInvoke);
+	protected Node listOfCoursesPane(ICourse[] coursesInfo) {
+		VBox coursePane=new VBox(10);
+		coursePane.setPadding(new Insets(70));
+		int length=0;//calculate all shows amount
+		for (ICourse iCourse : coursesInfo) {
+			Iterator<Integer> iter=iCourse.getShowCodes().iterator();
+			while(iter.hasNext()==true){
+				length++;
+				iter.next();
+			}
+		}
+		coursesCheckboxes=new CourseCheckBox[length];
+		int i=0;
+		for (ICourse iCourse : coursesInfo) {
+			Iterator<Integer> iter=iCourse.getShowCodes().iterator();
+			while(iter.hasNext()==true){
+				int j= iter.next();
+				coursesCheckboxes[i]=new CourseCheckBox(iCourse.getCourseName(),iCourse.getCourseCode(),j);
+				coursesCheckboxes[i].setOnAction(e->courseCheckBoxAction((CourseCheckBox)e.getSource()));
+				coursePane.getChildren().add(coursesCheckboxes[i]);
+				i++;
+			}
+			
+			
+		}
+		return coursePane;
+		
 	}
-}
-
-
-
-
-
-
-public void activeColorButton(Button button) {
-	button.getStyleClass().clear();
-	button.getStyleClass().add("scheduleButtonActive");
-}
-public boolean isButoonActive(Button button) {
-	if(button.getStylesheets().get(1).equals("scheduleButtonActive")) {
-		return true;
+	public void deactiveCollorButton(ScheduleButton button) {
+		button.getStyleClass().clear();
+		button.getStyleClass().add("scheduleButtonUnactive");
+		button.setFlag(false);
 	}
-	return false;
+
+	public void activeCollorButton(ScheduleButton button) {
+		button.getStyleClass().clear();
+		button.getStyleClass().add("scheduleButtonActive");
+		button.setFlag(true);
 	}
-@Override
-public void changeColumnToDeactiveColor(int day){
-	for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
-		deactiveCollorButton(scheduleButtons[day-1][i]);
+
+	
+	public void changeSceduleButtonUnactive() {
+		if(buttonInvoke.isFlag()) {
+			deactiveCollorButton(buttonInvoke);
+		}
+		else {
+
+			activeCollorButton(buttonInvoke);
+		}
 	}
-}
-@Override
-public void changeColumnToActiveColor(int day){
-	for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
-		activeColorButton(scheduleButtons[day-1][i]);
+
+	public void activeColorButton(Button button) {
+		button.getStyleClass().clear();
+		button.getStyleClass().add("scheduleButtonActive");
 	}
-}
-@Override
-public void addSlotTOschedule(ISlot[] inokedSlots) {
-	for (ISlot iSlot : inokedSlots) {
-		int day=IDay.intByDay(iSlot.getDay().toString())-1;
-		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
-		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
-		for (int i = startColumn; i < endColumn; i++) {
-			scheduleButtons[day][i].setText(invokingCourseCheckboxes.getCourseName());
+	public boolean isButoonActive(Button button) {
+		if(button.getStylesheets().get(1).equals("scheduleButtonActive")) {
+			return true;
+		}
+		return false;
+		}
+	
+	public void changeColumnToDeactiveColor(int day){
+		for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
+			deactiveCollorButton(scheduleButtons[day-1][i]);
+		}
+	}
+	
+	public void changeColumnToActiveColor(int day){
+		for (int i = 0; i < LAST_HOUR_OF_SCHEDULE-INITIAL_HOUR_OF_SCHEDULE; i++) {
+			activeColorButton(scheduleButtons[day-1][i]);
+		}
+	}
+	
+	public void addSlotTOschedule(ISlot[] inokedSlots) {
+		for (ISlot iSlot : inokedSlots) {
+			int day=IDay.intByDay(iSlot.getDay().toString())-1;
+			int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
+			int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
+			for (int i = startColumn; i < endColumn; i++) {
+				scheduleButtons[day][i].setText(invokingCourseCheckboxes.getCourseName());
+			}
+			
 		}
 		
 	}
+	
+	public void removeSlotFromschedule(ISlot[] inokedSlots) {
+		for (ISlot iSlot : inokedSlots) {
+			int day=IDay.intByDay(iSlot.getDay().toString())-1;
+			int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
+			int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
+			for (int i = startColumn; i < endColumn; i++) {
+				scheduleButtons[day][i].setText("");
+			}
+			
+		}
+		
+	}
+	
+	public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses) {
+			Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
+		    for (ICourse existCourse : impossibleCourses) {
+		    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
+			}
+			for (CourseCheckBox iCourse : coursesCheckboxes) {
+				if(mapOfCourses.get(iCourse.getCourseCode())==null){
+					iCourse.setDisable(false);
+			}
+				else {
+					if(iCourse.isSelected()==false)
+					iCourse.setDisable(true);
+				}
+		}
+		
+	}
+}
+
+
+@Override
+public void changeSceduleButtonUnactive() {
+	
+	
+}
+@Override
+public void changeColumnToDeactiveColor(int coulmn) {
+	schedule.changeColumnToDeactiveColor(coulmn);
+	
+}
+@Override
+public void changeColumnToActiveColor(int coulmn) {
+	schedule.changeColumnToActiveColor(coulmn);
+	
+}
+@Override
+public void addSlotTOschedule(ISlot[] iSlots) {
+	schedule.addSlotTOschedule(iSlots);
 	
 }
 @Override
 public void removeSlotFromschedule(ISlot[] inokedSlots) {
-	for (ISlot iSlot : inokedSlots) {
-		int day=IDay.intByDay(iSlot.getDay().toString())-1;
-		int startColumn=iSlot.getStartingTime()-INITIAL_HOUR_OF_SCHEDULE;
-		int endColumn=iSlot.getEndingTime()-INITIAL_HOUR_OF_SCHEDULE;
-		for (int i = startColumn; i < endColumn; i++) {
-			scheduleButtons[day][i].setText("");
-		}
-		
-	}
+	schedule.removeSlotFromschedule(inokedSlots);
 	
 }
 @Override
 public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses) {
-		Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
-	    for (ICourse existCourse : impossibleCourses) {
-	    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
-		}
-		for (CourseCheckBox iCourse : coursesCheckboxes) {
-			if(mapOfCourses.get(iCourse.getCourseCode())==null){
-				iCourse.setDisable(true);
-		}
-			else {
-				iCourse.setDisable(false);
-			}
-	}
-	
+	schedule.disableAndEnableCoursesCB(impossibleCourses);
 }
 
 }

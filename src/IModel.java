@@ -10,15 +10,15 @@ public interface IModel {
 	public void createNewCourse(String[] courseInput);
 	public void createNewShow(int courseCode, String[][] strings);
 	int getIvokingSlotNumber();
-	void setShowNumberPlusOne(int courseCode);
 	public ICourse[] getAllCoursesForViewer();
-	public void addCourseToSchedule(ICourse wantedCourse,int showCode);
+	public void addCourseToSchedule(ICourse wantedCourse);
 	ISlot[] getInokedSlots();
 	public void removeCourseFromSchedule(ICourse invokingCourseCheckboxes);
 
 	//TODO FOR TESTING ONLY!!!
 	public Model getModelForTestingOnly();
 	ArrayList<ICourse> getImpossibleCourses();
+	public void createAnotherShow(int creatingCourseCode, String[][] slotsInput);
 
 
 }
