@@ -212,7 +212,9 @@ public class Model implements IModel {
 		for (Course checkCourse : allCourses.getMapOfCourse().values()) {
 			for (int i = 0; i < checkCourse.getShowCodes().size(); i++) {
 			if (schedule.timeValidSlots(checkCourse, (int) checkCourse.getShowCodes().toArray()[i]) == false) {
-				impossibleCourses.add(checkCourse);
+				Course course=new Course(checkCourse.getCourseCode(),checkCourse.getCourseName());
+				course.getShows().put(i, checkCourse.getShows().get(i));
+				impossibleCourses.add(course);
 			}
 			}
 		}

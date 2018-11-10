@@ -580,17 +580,46 @@ class ScheduleJFXPartTwo{
 			Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
 		    for (ICourse existCourse : impossibleCourses) {
 		    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
+		    	System.out.println(existCourse.getCourseName()+ " "+existCourse.getShowCodes()); 
 			}
+		    
 			for (CourseCheckBox iCourse : coursesCheckboxes) {
+				
 				if(mapOfCourses.get(iCourse.getCourseCode())==null){
 					iCourse.setDisable(false);
 			}
 				else {
-					if(iCourse.isSelected()==false)
-					iCourse.setDisable(true);
+					for (Integer showCodeImpossible : mapOfCourses.get(iCourse.getCourseCode()).getShowCodes()) {
+						for (Integer showCode : iCourse.getShowCodes()) {
+							if(showCode==showCodeImpossible){
+								if(iCourse.isSelected()==false){
+									iCourse.setDisable(true);
+								}
+								else iCourse.setDisable(false);
+							}
+							else iCourse.setDisable(false);
+						}
+					
+					}
+						
 				}
+				
+					
+				}
+				
+				
+	for (CourseCheckBox iCourse : coursesCheckboxes) {
+		if (iCourse.isSelected()){
+			for(CourseCheckBox iCourse2 : coursesCheckboxes){
+				if(iCourse2.getCourseCode()==iCourse.getCourseCode()){
+					if(iCourse2.isSelected()==false){
+					iCourse2.setDisable(true);
+					}
+				}
+			}
 		}
 		
+	}
 	}
 }
 

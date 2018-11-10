@@ -27,7 +27,7 @@ public class CourseCheckBox extends CheckBox implements ICourse{
 		return  this.name;
 	}
 	@Override
-	public Set getShowCodes() {
+	public Set<Integer> getShowCodes() {
 		return set;
 	}
 	public int getShowCode(){
