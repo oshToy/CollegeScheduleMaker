@@ -580,7 +580,6 @@ class ScheduleJFXPartTwo{
 			Map<Integer,ICourse> mapOfCourses=new HashMap<Integer,ICourse>(); 
 		    for (ICourse existCourse : impossibleCourses) {
 		    	mapOfCourses.put(existCourse.getCourseCode(), existCourse);
-		    	System.out.println(existCourse.getCourseName()+ " "+existCourse.getShowCodes()); 
 			}
 		    
 			for (CourseCheckBox iCourse : coursesCheckboxes) {
