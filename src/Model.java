@@ -1,6 +1,10 @@
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import exceptions.CourseCodeAlreadyExistException;
 import exceptions.CourseNameAlreadyExistException;
@@ -15,8 +19,12 @@ public class Model implements IModel {
 	private ArrayList<EventHandler<MyActionEvent>> listeners = new ArrayList<>();
 	private AllCourses allCourses = new AllCourses();
 	private Schedule schedule = new Schedule();
-
+	private ArrayList<Course> impossibleCoursesByCourseTiming = new ArrayList<>();
+	private HashMap<Integer, Course> impossibleCoursesByUserTiming = new HashMap();
+	private HashSet<Integer> blockedDays = new HashSet();// nedd to by finals by
+															// number of days
 	// TODO FOR TESTING ONLY!!!
+
 	@Override
 	public Model getModelForTestingOnly() {
 		return this;
@@ -176,6 +184,7 @@ public class Model implements IModel {
 			allCourses.getCourseById(wantedCourse.getCourseCode())
 					.getShowByShowCourse((int) wantedCourse.getShowCodes().toArray()[0]).getSlots()
 					.toArray(inokedSlots);
+			impossibleCourses();
 			invokeListeners(Controller.COURSE_ADDED_TO_SCHEDULE);
 		} catch (courseNotExistException e) {
 			// TODO Auto-generated catch block
@@ -197,7 +206,7 @@ public class Model implements IModel {
 					.getShowByShowCourse((int) wantedCourse.getShowCodes().toArray()[0]).getSlots()
 					.toArray(inokedSlots);
 			schedule.removeCourseFromSchedule(allCourses.getCourseById(wantedCourse.getCourseCode()));
-
+			impossibleCourses();
 			invokeListeners(Controller.COURSE_REMOVED_FROM_SCHEDULE);
 		} catch (courseNotExistException e) {
 			// TODO Auto-generated catch block
@@ -206,25 +215,154 @@ public class Model implements IModel {
 
 	}
 
-	@Override
-	public ArrayList<ICourse> getImpossibleCourses() {
-		ArrayList<ICourse> impossibleCourses = new ArrayList<>();
+	private void impossibleCourses() {
+		ArrayList<Course> impossibleCoursesNew = new ArrayList<>();
 		for (Course checkCourse : allCourses.getMapOfCourse().values()) {
 			for (int i = 0; i < checkCourse.getShowCodes().size(); i++) {
-			if (schedule.timeValidSlots(checkCourse, (int) checkCourse.getShowCodes().toArray()[i]) == false) {
-				Course course=new Course(checkCourse.getCourseCode(),checkCourse.getCourseName());
-				course.getShows().put(i, checkCourse.getShows().get(i));
-				impossibleCourses.add(course);
-			}
+				if (schedule.timeValidSlots(checkCourse, (int) checkCourse.getShowCodes().toArray()[i]) == false) {
+					Course course = new Course(checkCourse.getCourseCode(), checkCourse.getCourseName());
+					course.getShows().put(i, checkCourse.getShows().get(i));
+					impossibleCoursesNew.add(course);
+				}
 			}
 		}
-		return impossibleCourses;
+		this.impossibleCoursesByCourseTiming = impossibleCoursesNew;
 	}
 
 	@Override
 	public void createAnotherShow(int creatingCourseCode, String[][] slotsInput) {
 		createAnotherShow = true;
 		createNewShow(creatingCourseCode, slotsInput);
+
+	}
+
+	@Override
+	public void addShowsByDay(int invokingDayNumber) {
+		for (Course course : allCourses.getMapOfCourse().values()) {
+			for (Show show : course.getShows().values()) {
+				for (Slot iSlot : show.getSlots()) {
+					int slotDay = IDay.intByDay(iSlot.getDay().toString());
+					if (invokingDayNumber == slotDay) {
+						schedule.removeCourseFromSchedule(course);
+						Course impossibleCourse = new Course(course.getCourseCode(), course.getCourseName());
+						course.getShows().put(show.getShowCode(), show);
+						// impossibleCoursesByUserTiming.add(course);
+					}
+				}
+			}
+		}
+		invokeListeners(Controller.DAY_CHECKBOX_DEACTIVATED_MODEL);
+	}
+
+	@Override
+	public void removeShowsByDay(int invokingDayNumber) {
+		for (Course course : allCourses.getMapOfCourse().values()) {
+			for (Show show : course.getShows().values()) {
+				for (Slot iSlot : show.getSlots()) {
+					int slotDay = IDay.intByDay(iSlot.getDay().toString());
+					if (invokingDayNumber == slotDay) {
+						// System.out.println(show);
+						schedule.removeCourseFromSchedule(course);
+						if (impossibleCoursesByUserTiming.get(course.getCourseCode()) == null) {
+							Course impossibleCourse = new Course(course.getCourseCode(), course.getCourseName());
+							impossibleCourse.getShows().put(show.getShowCode(), show);
+							impossibleCoursesByUserTiming.put(course.getCourseCode(), impossibleCourse);
+						} else {
+
+							impossibleCoursesByUserTiming.get(course.getCourseCode()).getShows().put(show.getShowCode(),
+									show);
+
+						}
+					}
+				}
+			}
+		}
+
+		impossibleCourses();
+		blockedDays.add(invokingDayNumber);
+		invokeListeners(Controller.DAY_CHECKBOX_DEACTIVATED_MODEL);
+	}
+
+	@Override
+	public ArrayList<ICourse> getImpossibleCourses() {// union of two array list
+		Map<Integer, Course> impossibleCoursesNew = new HashMap();
+		for (Course iCourse : impossibleCoursesByCourseTiming) {
+			impossibleCoursesNew.put(iCourse.getCourseCode(), iCourse);
+		}
+		for (Course iCourse : impossibleCoursesByUserTiming.values()) {
+			if (impossibleCoursesNew.get(iCourse.getCourseCode()) == null) {
+				impossibleCoursesNew.put(iCourse.getCourseCode(), iCourse);
+			} else {
+				for (Integer integer : iCourse.getShowCodes()) {
+					impossibleCoursesNew.get(iCourse.getCourseCode()).getShows().put(integer,
+							iCourse.getShows().get(integer));
+				}
+
+			}
+		}
+		ArrayList<ICourse> ret = new ArrayList<>();
+		for (ICourse iCourse : impossibleCoursesNew.values()) {
+			ret.add(iCourse);
+		}
+		// System.out.println("schedule");
+		for (ICourse iCourse : schedule.getCourseOfSchedule().values()) {
+			// System.out.println(iCourse);
+		}
+		// System.out.println();
+		// System.out.println(impossibleCoursesByCourseTiming);
+		// System.out.println();
+		// System.out.println(impossibleCoursesByUserTiming);
+		return ret;
+	}
+
+	@Override
+	public void addPossibleShowsByDay(int invokingDayNumber) {
+		// need to fix !! avoid 2 days blocking problem
+		// when one day able need to check another days.
+		blockedDays.remove(invokingDayNumber);
+		HashMap<Course, HashSet<Integer>> map = new HashMap();
+		for (Course course : impossibleCoursesByUserTiming.values()) {
+			for (Show show : course.getShows().values()) {
+				for (Slot iSlot : show.getSlots()) {
+					int slotDay = IDay.intByDay(iSlot.getDay().toString());
+
+					if (invokingDayNumber == slotDay) {
+						boolean flag = false;
+						// check if course blocking by another day before
+						// removing
+						for (Slot iSlotblock : show.getSlots()) {
+							int slotblockDay = IDay.intByDay(iSlotblock.getDay().toString());
+							if (blockedDays.contains(slotblockDay)) {
+								flag = true;
+							}
+						}
+						if (flag == false) {
+							if (map.get(course) == null) {
+								map.put(course, new HashSet<Integer>());
+							}
+
+							map.get(course).add(show.getShowCode());
+						}
+
+					}
+				}
+			}
+		}
+		for (Entry<Course, HashSet<Integer>> entry : map.entrySet()) {
+			if (impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShowCodes().size() == 1) {
+				impossibleCoursesByUserTiming.remove(entry.getKey().getCourseCode());
+			} else {
+				for (Integer integer : entry.getValue()) {
+					impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShows().remove(integer);
+				}
+				if (impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShowCodes().size() == 0) {
+					impossibleCoursesByUserTiming.remove(entry.getKey().getCourseCode());
+				}
+			}
+		}
+		impossibleCourses();
+
+		invokeListeners(Controller.DAY_CHECKBOX_ACTIVATED_MODEL);
 
 	}
 

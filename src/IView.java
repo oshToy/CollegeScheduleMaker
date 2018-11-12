@@ -35,6 +35,8 @@ public interface IView {
 	public void addSlotTOschedule(ISlot[] iSlots);
 	public void removeSlotFromschedule(ISlot[] inokedSlots);
 	public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses);
+	public void disableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber);
+	public void ableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber);
 
 
 

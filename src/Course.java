@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,9 +25,9 @@ public class Course implements ICourse {
 
 	}
 	@Override
-	public Set<Integer> getShowCodes(){
-		
-		return mapOfShows.keySet();
+	public HashSet<Integer> getShowCodes(){
+		HashSet<Integer> ret=new HashSet(mapOfShows.keySet()) ;
+		return ret;
 	}
 	@Override
 	public int getCourseCode() {

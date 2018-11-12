@@ -7,7 +7,7 @@ public class CourseCheckBox extends CheckBox implements ICourse{
 	private int showCode;
 	private int courseCode;
 	private String name;
-	private Set <Integer> set;
+	private HashSet <Integer> set;
 	
 	public CourseCheckBox(String name,int courseCode,int showCode){
 		super(name);
@@ -27,7 +27,7 @@ public class CourseCheckBox extends CheckBox implements ICourse{
 		return  this.name;
 	}
 	@Override
-	public Set<Integer> getShowCodes() {
+	public HashSet <Integer> getShowCodes() {
 		return set;
 	}
 	public int getShowCode(){

@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Set;
 
 public interface ICourse {
@@ -6,6 +7,6 @@ public interface ICourse {
 
 	String getCourseName();
 
-	Set<Integer> getShowCodes();
+	HashSet<Integer> getShowCodes();
 
 }

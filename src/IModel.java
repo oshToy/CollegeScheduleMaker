@@ -19,6 +19,9 @@ public interface IModel {
 	public Model getModelForTestingOnly();
 	ArrayList<ICourse> getImpossibleCourses();
 	public void createAnotherShow(int creatingCourseCode, String[][] slotsInput);
+	public void removeShowsByDay(int invokingDayNumber);
+	void addShowsByDay(int invokingDayNumber);
+	public void addPossibleShowsByDay(int invokingDayNumber);
 
 
 }
