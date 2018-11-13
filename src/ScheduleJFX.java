@@ -114,7 +114,14 @@ public class ScheduleJFX implements IView {
 
 	private void scheduleButtonsUnAvctive(ScheduleButton button) {
 		buttonInvoke = button;
-		invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE);
+		if (buttonInvoke.isFlag()) {
+			invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE_VIEWER);
+		
+		} else {
+				
+			invokeListeners(Controller.SCHEDULE_BUTTON_ACTIVE_VIEWER);
+		}
+		
 
 	}
 
@@ -470,7 +477,7 @@ public class ScheduleJFX implements IView {
 
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < LAST_HOUR_OF_SCHEDULE - INITIAL_HOUR_OF_SCHEDULE; j++) {
-					ScheduleButton tempButton = new ScheduleButton();
+					ScheduleButton tempButton = new ScheduleButton(IDay.dayByInt(i+1),j+INITIAL_HOUR_OF_SCHEDULE);
 					tempButton.getStyleClass().add("scheduleButtonActive");
 					tempButton.setPadding(new Insets(0, 15, 0, 15));
 					tempButton.setMinWidth(150);
@@ -528,14 +535,7 @@ public class ScheduleJFX implements IView {
 			button.setFlag(true);
 		}
 
-		public void changeSceduleButtonUnactive() {
-			if (buttonInvoke.isFlag()) {
-				deactiveCollorButton(buttonInvoke);
-			} else {
-
-				activeCollorButton(buttonInvoke);
-			}
-		}
+		
 
 		public void activeColorButton(Button button) {
 			button.getStyleClass().clear();
@@ -628,7 +628,7 @@ public class ScheduleJFX implements IView {
 			}
 		}
 
-		private void clearDayTextCoulmn(int invokingDayNumber) {// removeSlotFromschedule
+		private void clearTextCoulmnByDay(int invokingDayNumber) {// removeSlotFromschedule
 
 			HashSet<String> coursesName = new HashSet();
 			// remove all courses of the invoking day
@@ -650,8 +650,8 @@ public class ScheduleJFX implements IView {
 		}
 
 		public void disableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber) {
-			disableSelcetedCourse(invokingDayNumber);
-			clearDayTextCoulmn(invokingDayNumber);
+			disableSelcetedCourseByDay(invokingDayNumber);
+			clearTextCoulmnByDay(invokingDayNumber);
 			disableAndEnableCoursesCB(impossibleCourses);
 
 		}
@@ -667,7 +667,7 @@ public class ScheduleJFX implements IView {
 			return coursesName;
 		}
 
-		private void disableSelcetedCourse(int invokingDayNumber) {
+		private void disableSelcetedCourseByDay(int invokingDayNumber) {
 			HashSet<String> coursesName = getCoursesNameByDay(invokingDayNumber);
 
 			for (CourseCheckBox course : coursesCheckboxes) {
@@ -693,12 +693,55 @@ public class ScheduleJFX implements IView {
 			}
 			
 		}
+		public void disableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
+			deactiveCollorButton(buttonInvoke);
+			disableSelcetedCourseByHour(buttonInvoke);
+			clearTextCoulmnByHour(buttonInvoke);
+			disableAndEnableCoursesCB(impossibleCourses);
+			
+		}
+
+		private void clearTextCoulmnByHour(ScheduleButton buttonInvoke) {
+
+			// remove all courses of the invoking hour
+			int dayNumber=IDay.intByDay(buttonInvoke.getDay().toString());
+			int beginingHour=buttonInvoke.getBeginingHour();
+			String courseName=buttonInvoke.getText();
+			for (int j = 0; j < scheduleButtons[dayNumber - 1].length; j++) {
+				if (scheduleButtons[dayNumber - 1][j].getText().equals(courseName)) {
+					scheduleButtons[dayNumber - 1][j].setText("");
+				}
+			}
+			// remove course from other days
+			for (int i = 0; i < scheduleButtons.length; i++) {
+				for (int j = 0; j < scheduleButtons[i].length; j++) {
+					if (scheduleButtons[i][j].getText().equals(courseName)) {
+						scheduleButtons[i][j].setText("");
+					}
+				}
+			}
+			
+		}
+
+		private void disableSelcetedCourseByHour(ScheduleButton buttonInvoke) {
+			for (CourseCheckBox course : coursesCheckboxes) {
+				if (course.isSelected() && buttonInvoke.getText().equals(course.getText())) {
+					course.setSelected(false);
+					course.setDisable(true);
+
+				}
+			}
+
+			
+		}
+
+		public void ableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
+			activeCollorButton(buttonInvoke);
+			disableAndEnableCoursesCB(impossibleCourses);
+		}
 	}
 
-	@Override
-	public void changeSceduleButtonUnactive() {
-		schedule.changeSceduleButtonUnactive();
-	}
+
 
 	@Override
 	public void changeColumnToDeactiveColor(int coulmn) {
@@ -738,6 +781,28 @@ public class ScheduleJFX implements IView {
 	@Override
 	public void ableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber) {
 		schedule.ableCoursesCBByDay(impossibleCourses, invokingDayNumber);
+		
+	}
+	@Override
+	public IHour getButtonInvoke(){
+		return (IHour) this.buttonInvoke;
+	}
+
+	@Override
+	public void deactiveCollorButton(ScheduleButton button) {
+		schedule.deactiveCollorButton(button);
+		
+	}
+
+	@Override
+	public void disableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
+		schedule.disableCoursesCBByHour(impossibleCourses);
+		
+	}
+
+	@Override
+	public void ableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
+		schedule.ableCoursesCBByHour(impossibleCourses);
 		
 	}
 

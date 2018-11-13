@@ -23,6 +23,7 @@ public class Model implements IModel {
 	private HashMap<Integer, Course> impossibleCoursesByUserTiming = new HashMap();
 	private HashSet<Integer> blockedDays = new HashSet();// nedd to by finals by
 															// number of days
+	private HashMap<Integer,HashSet<Integer>> blockedHours=new HashMap();//HashMap <days,HashSet<hours>>
 	// TODO FOR TESTING ONLY!!!
 
 	@Override
@@ -261,7 +262,6 @@ public class Model implements IModel {
 				for (Slot iSlot : show.getSlots()) {
 					int slotDay = IDay.intByDay(iSlot.getDay().toString());
 					if (invokingDayNumber == slotDay) {
-						// System.out.println(show);
 						schedule.removeCourseFromSchedule(course);
 						if (impossibleCoursesByUserTiming.get(course.getCourseCode()) == null) {
 							Course impossibleCourse = new Course(course.getCourseCode(), course.getCourseName());
@@ -280,6 +280,7 @@ public class Model implements IModel {
 
 		impossibleCourses();
 		blockedDays.add(invokingDayNumber);
+		blockedHours.remove(invokingDayNumber);
 		invokeListeners(Controller.DAY_CHECKBOX_DEACTIVATED_MODEL);
 	}
 
@@ -317,15 +318,13 @@ public class Model implements IModel {
 
 	@Override
 	public void addPossibleShowsByDay(int invokingDayNumber) {
-		// need to fix !! avoid 2 days blocking problem
-		// when one day able need to check another days.
 		blockedDays.remove(invokingDayNumber);
-		HashMap<Course, HashSet<Integer>> map = new HashMap();
+		HashMap<Course, HashSet<Integer>> map = new HashMap();//craete map of imposiible course ,
+		//for not changing length of arraylist while runing over it 
 		for (Course course : impossibleCoursesByUserTiming.values()) {
 			for (Show show : course.getShows().values()) {
 				for (Slot iSlot : show.getSlots()) {
 					int slotDay = IDay.intByDay(iSlot.getDay().toString());
-
 					if (invokingDayNumber == slotDay) {
 						boolean flag = false;
 						// check if course blocking by another day before
@@ -334,6 +333,17 @@ public class Model implements IModel {
 							int slotblockDay = IDay.intByDay(iSlotblock.getDay().toString());
 							if (blockedDays.contains(slotblockDay)) {
 								flag = true;
+							}
+							else if(blockedHours.get(slotblockDay)!=null){
+								HashSet<Integer> set=blockedHours.get(slotblockDay);
+								int slotBeginingHour = iSlotblock.getStartingTime();
+								int slotEndiningHour = iSlotblock.getEndingTime();
+								for (Integer integer : set) {
+									if((slotBeginingHour <= integer && slotEndiningHour > integer)){
+										flag = true;
+										break;
+									}
+								}
 							}
 						}
 						if (flag == false) {
@@ -355,14 +365,120 @@ public class Model implements IModel {
 				for (Integer integer : entry.getValue()) {
 					impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShows().remove(integer);
 				}
-				if (impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShowCodes().size() == 0) {
-					impossibleCoursesByUserTiming.remove(entry.getKey().getCourseCode());
-				}
 			}
 		}
 		impossibleCourses();
 
 		invokeListeners(Controller.DAY_CHECKBOX_ACTIVATED_MODEL);
+
+	}
+
+	@Override
+	public void removeShowsByHour(IHour buttonInvoke) {
+		int dayNumber = IDay.intByDay(buttonInvoke.getDay().toString());
+		int beginingHour = buttonInvoke.getBeginingHour();
+
+		for (Course course : allCourses.getMapOfCourse().values()) {
+			for (Show show : course.getShows().values()) {
+				for (Slot iSlot : show.getSlots()) {
+					int slotDay = IDay.intByDay(iSlot.getDay().toString());
+					int slotBeginingHour = iSlot.getStartingTime();
+					int slotEndiningHour = iSlot.getEndingTime();
+					if (dayNumber == slotDay && (slotBeginingHour <= beginingHour && slotEndiningHour > beginingHour)) {
+						schedule.removeCourseFromSchedule(course);
+						if (impossibleCoursesByUserTiming.get(course.getCourseCode()) == null) {
+							Course impossibleCourse = new Course(course.getCourseCode(), course.getCourseName());
+							impossibleCourse.getShows().put(show.getShowCode(), show);
+							impossibleCoursesByUserTiming.put(course.getCourseCode(), impossibleCourse);
+						} else {
+
+							impossibleCoursesByUserTiming.get(course.getCourseCode()).getShows().put(show.getShowCode(),
+									show);
+
+						}
+					}
+				}
+			}
+		}
+
+		impossibleCourses();
+		if (blockedHours.get(dayNumber)==null) {
+			blockedHours.put(dayNumber, new HashSet<Integer>());
+		}
+		blockedHours.get(dayNumber).add(beginingHour);
+		System.out.println(blockedHours);
+		invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE_MODEL);
+
+	}
+
+	@Override
+	public void addPossibleShowsByHour(IHour buttonInvoke) {
+		int dayNumber = IDay.intByDay(buttonInvoke.getDay().toString());
+		int beginingHour = buttonInvoke.getBeginingHour();
+		System.out.println(blockedHours);
+		if(blockedHours.get(dayNumber)!=null){//if hour become active where day was blocked
+		blockedHours.get(dayNumber).remove(beginingHour);//deleting blocked hours
+		if (blockedHours.get(dayNumber).size()==0) {//deleting blocked day if there are not any blocking hours
+			blockedHours.remove(dayNumber);
+		}
+		}
+		HashMap<Course, HashSet<Integer>> map = new HashMap();//craete map of imposiible course ,
+		//for not changing length of arraylist while runing over it 
+		int  possibleCourseID=-1;
+		int  possibleShowID=-1;
+		for (Course course : impossibleCoursesByUserTiming.values()) {
+			for (Show show : course.getShows().values()) {
+				for (Slot iSlot : show.getSlots()) {
+					int slotDay = IDay.intByDay(iSlot.getDay().toString());
+					int slotBeginingHour = iSlot.getStartingTime();
+					int slotEndiningHour = iSlot.getEndingTime();
+					if (dayNumber == slotDay&&(slotBeginingHour <= beginingHour && slotEndiningHour > beginingHour)) {
+						boolean flag = false;
+						// check if course blocking by another day before
+						// removing
+						for (Slot iSlotblock : show.getSlots()) {
+							
+							int slotblockDay = IDay.intByDay(iSlotblock.getDay().toString());
+							if (blockedDays.contains(slotblockDay)) {
+								flag = true;
+							}
+							else if(blockedHours.get(slotblockDay)!=null){
+								HashSet<Integer> set=blockedHours.get(slotblockDay);
+								int islotBeginingHour = iSlotblock.getStartingTime();
+								int islotEndiningHour = iSlotblock.getEndingTime();
+								for (Integer integer : set) {
+									if((islotBeginingHour <= integer && islotEndiningHour > integer)){
+										flag = true;
+										break;
+									}
+								}
+							}
+						}
+						if (flag == false) {
+							if (map.get(course) == null) {
+								map.put(course, new HashSet<Integer>());
+							}
+
+							map.get(course).add(show.getShowCode());
+						}
+
+					}
+				}
+			}
+		}
+		for (Entry<Course, HashSet<Integer>> entry : map.entrySet()) {
+			if (impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShowCodes().size() == 1) {
+				impossibleCoursesByUserTiming.remove(entry.getKey().getCourseCode());
+			} else {
+				for (Integer integer : entry.getValue()) {
+					impossibleCoursesByUserTiming.get(entry.getKey().getCourseCode()).getShows().remove(integer);
+				}
+			}
+		}
+		impossibleCourses();
+
+		invokeListeners(Controller.SCHEDULE_BUTTON_ACTIVE_MODEL);
+
 
 	}
 

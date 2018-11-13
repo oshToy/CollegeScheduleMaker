@@ -10,8 +10,6 @@ public class Schedule implements IDay {
 	private Map  <Integer,Course> courseOfSchedule;
 	public Schedule(){
 		courseOfSchedule=new HashMap();
-
-		
 	}
 	public void addCourseToSchedule(Course wantedCourse,int showCode) {
 				if(timeValidSlots(wantedCourse,showCode)==true){

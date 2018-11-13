@@ -3,7 +3,6 @@
 }
 
 .errorTextField{
- 
     -fx-border-color: #f00;
     -fx-border-width: 2px;
 }
@@ -14,11 +13,13 @@
 	-fx-font-size:22px;
 }
 .scheduleButtonActive{
+ 	-fx-alignment: center;
 	-fx-background-color: #e7e7e7;
 	-fx-font-size:20px;
 
 }
 .scheduleButtonUnactive{
+ 	-fx-alignment: center;	
 	-fx-background-color: #696969;
 	-fx-font-size:20px;
 }

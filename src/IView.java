@@ -24,9 +24,6 @@ public interface IView {
 	public void roomFullException(int slotNumber);
 	public void teacherTeachingException(int slotNumber);
 	public void roomInputIsntAint(int slotNumber);
-
-	void changeSceduleButtonUnactive();
-
 	public void scheduleMakerPane(ICourse[] coursesName);
 	void changeColumnToDeactiveColor(int coulmn);
 	int getInvokingDayNumber();
@@ -37,6 +34,10 @@ public interface IView {
 	public void disableAndEnableCoursesCB(ArrayList<ICourse> impossibleCourses);
 	public void disableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber);
 	public void ableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber);
+	IHour getButtonInvoke();
+	public void deactiveCollorButton(ScheduleButton button);
+	public void disableCoursesCBByHour(ArrayList<ICourse> impossibleCourses);
+	public void ableCoursesCBByHour(ArrayList<ICourse> impossibleCourses);
 
 
 

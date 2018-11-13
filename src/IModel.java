@@ -22,6 +22,9 @@ public interface IModel {
 	public void removeShowsByDay(int invokingDayNumber);
 	void addShowsByDay(int invokingDayNumber);
 	public void addPossibleShowsByDay(int invokingDayNumber);
+	public void removeShowsByHour(IHour iHour);
+	public void addPossibleShowsByHour(IHour iHour);
+
 
 
 }

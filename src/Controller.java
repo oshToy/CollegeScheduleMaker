@@ -19,7 +19,8 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String ROOM_FULL_EROOR = "ROOM_FULL_EROOR";
 	public static final String TEACHER_ALREADY_TEACHING_ERROR = "TEACHER_ALREADY_TEACHING_ERROR";
 	public static final String ROOM_INPUT_ISNT_INTEGER = "room input isnt a int";
-	public static final String SCHEDULE_BUTTON_UNACTIVE = " schedule button is changed from/to active";
+	public static final String SCHEDULE_BUTTON_UNACTIVE_VIEWER = " schedule button is changed to unactive";
+	public static final String SCHEDULE_BUTTON_ACTIVE_VIEWER = "schedule button is changed to active";
 	public static final String DAY_CHECKBOX_ACTIVATED_VIEWER = "day checkbox activated viewer";
 	public static final String DAY_CHECKBOX_ACTIVATED_MODEL = "day checkbox activated model";
 	public static final String DAY_CHECKBOX_DEACTIVATED_VIEWER = "day checkbox deactivated viewer";
@@ -30,6 +31,9 @@ public class Controller implements EventHandler<MyActionEvent> {
 	public static final String COURSE_REMOVED_FROM_SCHEDULE = "course remove from schedule";
 	public static final String CREATE_ANOTHER_SHOW_VIEWER = "create another show viewer";
 	public static final String CREATE_ANOTHER_SHOW_MODEL = "create another show model";
+	public static final String SCHEDULE_BUTTON_UNACTIVE_MODEL = "schedule button is changed to unactive MODEL";
+	public static final String SCHEDULE_BUTTON_ACTIVE_MODEL = "schedule button is changed to active MODEL";
+
 
 	
 	private IView viewer;
@@ -120,12 +124,20 @@ public class Controller implements EventHandler<MyActionEvent> {
 		}
 		else if (e.getMsg().equals(COURSE_CHECKBOX_DEACTIVATED)) {
 			
-			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());
-			
+			model.removeCourseFromSchedule(viewer.getInvokingCourseCheckboxes());			
 		}
-
-		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE)) {
-			viewer.changeSceduleButtonUnactive();
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE_VIEWER)) {
+			model.removeShowsByHour(viewer.getButtonInvoke());
+		}
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_UNACTIVE_MODEL)) {
+			viewer.disableCoursesCBByHour(model.getImpossibleCourses());
+		}
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_ACTIVE_VIEWER)) {
+			model.addPossibleShowsByHour(viewer.getButtonInvoke());
+		}
+		
+		else if (e.getMsg().equals(SCHEDULE_BUTTON_ACTIVE_MODEL)) {
+			viewer.ableCoursesCBByHour(model.getImpossibleCourses());
 		}
 		else if (e.getMsg().equals(CREATE_ANOTHER_SHOW_VIEWER)) {
 			createAnotherShow((IView) e.getSource());
