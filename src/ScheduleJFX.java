@@ -1,13 +1,9 @@
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.sun.javafx.scene.layout.region.BorderImageSlices;
-import com.sun.javafx.scene.paint.GradientUtils.Point;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -44,7 +40,7 @@ public class ScheduleJFX implements IView {
 	private TextField courseName;
 	private int creatingCourseCode;
 	// show input
-	private ComboBox numberOfSlotsComboBox;
+	private ComboBox<String> numberOfSlotsComboBox;
 
 	// slot input
 	private SlotInputObjects slotComboBoxandTextField[];
@@ -116,12 +112,11 @@ public class ScheduleJFX implements IView {
 		buttonInvoke = button;
 		if (buttonInvoke.isFlag()) {
 			invokeListeners(Controller.SCHEDULE_BUTTON_UNACTIVE_VIEWER);
-		
+
 		} else {
-				
+
 			invokeListeners(Controller.SCHEDULE_BUTTON_ACTIVE_VIEWER);
 		}
-		
 
 	}
 
@@ -283,13 +278,13 @@ public class ScheduleJFX implements IView {
 		for (int i = 0; i < amountOfSlots; i++) {
 			slotComboBoxandTextField[i] = new SlotInputObjects();
 			HBox slotInputPane = new HBox(5);
-			ComboBox dayComboBox = new ComboBox<>(dayObservableList());
+			ComboBox<String> dayComboBox = new ComboBox<>(dayObservableList());
 			dayComboBox.setPromptText("Choose day");
 			slotComboBoxandTextField[i].setDayComboBox(dayComboBox);
-			ComboBox startTimeComboBox = new ComboBox<>(TimeObservableList());
+			ComboBox<String> startTimeComboBox = new ComboBox<>(TimeObservableList());
 			startTimeComboBox.setPromptText("Start time");
 			slotComboBoxandTextField[i].setStartTimeComboBox(startTimeComboBox);
-			ComboBox finishTimeComboBox = new ComboBox<>(TimeObservableList());
+			ComboBox<String> finishTimeComboBox = new ComboBox<>(TimeObservableList());
 			finishTimeComboBox.setPromptText("Finish time");
 			slotComboBoxandTextField[i].setFinishTimeComboBox(finishTimeComboBox);
 			TextField roomNumber = new TextField();
@@ -310,18 +305,18 @@ public class ScheduleJFX implements IView {
 		return slotPane;
 	}
 
-	private ObservableList numberOfSlotsObservableList() {
+	private ObservableList<String> numberOfSlotsObservableList() {
 		ObservableList<String> hourOptions = FXCollections.observableArrayList("1", "2", "3", "4", "5");
 		return hourOptions;
 	}
 
-	private ObservableList TimeObservableList() {
+	private ObservableList<String> TimeObservableList() {
 		ObservableList<String> hourOptions = FXCollections.observableArrayList("7", "8", "9", "10", "11", "12", "13",
 				"14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24");
 		return hourOptions;
 	}
 
-	private ObservableList dayObservableList() {
+	private ObservableList<String> dayObservableList() {
 		ObservableList<String> dayOptions = FXCollections.observableArrayList("Sunday", "Monday", "Tuesday",
 				"Wednesday", "Thursday", "Friday");
 		return dayOptions;
@@ -352,7 +347,7 @@ public class ScheduleJFX implements IView {
 
 	@Override
 	public int getNumberOfSlots() {
-		Integer num = new Integer((String) numberOfSlotsComboBox.getValue());
+		Integer num = new Integer(numberOfSlotsComboBox.getValue());
 		return num.intValue();
 	}
 
@@ -477,7 +472,7 @@ public class ScheduleJFX implements IView {
 
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < LAST_HOUR_OF_SCHEDULE - INITIAL_HOUR_OF_SCHEDULE; j++) {
-					ScheduleButton tempButton = new ScheduleButton(IDay.dayByInt(i+1),j+INITIAL_HOUR_OF_SCHEDULE);
+					ScheduleButton tempButton = new ScheduleButton(IDay.dayByInt(i + 1), j + INITIAL_HOUR_OF_SCHEDULE);
 					tempButton.getStyleClass().add("scheduleButtonActive");
 					tempButton.setPadding(new Insets(0, 15, 0, 15));
 					tempButton.setMinWidth(150);
@@ -534,8 +529,6 @@ public class ScheduleJFX implements IView {
 			button.getStyleClass().add("scheduleButtonActive");
 			button.setFlag(true);
 		}
-
-		
 
 		public void activeColorButton(Button button) {
 			button.getStyleClass().clear();
@@ -630,7 +623,7 @@ public class ScheduleJFX implements IView {
 
 		private void clearTextCoulmnByDay(int invokingDayNumber) {// removeSlotFromschedule
 
-			HashSet<String> coursesName = new HashSet();
+			HashSet<String> coursesName = new HashSet<String>();
 			// remove all courses of the invoking day
 			for (int j = 0; j < scheduleButtons[invokingDayNumber - 1].length; j++) {
 				if (scheduleButtons[invokingDayNumber - 1][j].getText() != "") {
@@ -657,7 +650,7 @@ public class ScheduleJFX implements IView {
 		}
 
 		private HashSet<String> getCoursesNameByDay(int invokingDayNumber) {
-			HashSet<String> coursesName = new HashSet();
+			HashSet<String> coursesName = new HashSet<String>();
 			for (int j = 0; j < scheduleButtons[invokingDayNumber - 1].length; j++) {
 				if (scheduleButtons[invokingDayNumber - 1][j].getText() != "") {
 					coursesName.add(scheduleButtons[invokingDayNumber - 1][j].getText());
@@ -681,32 +674,33 @@ public class ScheduleJFX implements IView {
 		}
 
 		public void ableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber) {
-		
+
 			ableDayTextCoulmn(invokingDayNumber);
 			disableAndEnableCoursesCB(impossibleCourses);
-			
+
 		}
 
 		private void ableDayTextCoulmn(int invokingDayNumber) {
 			for (int j = 0; j < scheduleButtons[invokingDayNumber - 1].length; j++) {
 				activeCollorButton(scheduleButtons[invokingDayNumber - 1][j]);
 			}
-			
+
 		}
+
 		public void disableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
 			deactiveCollorButton(buttonInvoke);
 			disableSelcetedCourseByHour(buttonInvoke);
 			clearTextCoulmnByHour(buttonInvoke);
 			disableAndEnableCoursesCB(impossibleCourses);
-			
+
 		}
 
 		private void clearTextCoulmnByHour(ScheduleButton buttonInvoke) {
 
 			// remove all courses of the invoking hour
-			int dayNumber=IDay.intByDay(buttonInvoke.getDay().toString());
-			int beginingHour=buttonInvoke.getBeginingHour();
-			String courseName=buttonInvoke.getText();
+			int dayNumber = IDay.intByDay(buttonInvoke.getDay().toString());
+			int beginingHour = buttonInvoke.getBeginingHour();
+			String courseName = buttonInvoke.getText();
 			for (int j = 0; j < scheduleButtons[dayNumber - 1].length; j++) {
 				if (scheduleButtons[dayNumber - 1][j].getText().equals(courseName)) {
 					scheduleButtons[dayNumber - 1][j].setText("");
@@ -720,7 +714,7 @@ public class ScheduleJFX implements IView {
 					}
 				}
 			}
-			
+
 		}
 
 		private void disableSelcetedCourseByHour(ScheduleButton buttonInvoke) {
@@ -732,7 +726,6 @@ public class ScheduleJFX implements IView {
 				}
 			}
 
-			
 		}
 
 		public void ableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
@@ -740,8 +733,6 @@ public class ScheduleJFX implements IView {
 			disableAndEnableCoursesCB(impossibleCourses);
 		}
 	}
-
-
 
 	@Override
 	public void changeColumnToDeactiveColor(int coulmn) {
@@ -781,29 +772,30 @@ public class ScheduleJFX implements IView {
 	@Override
 	public void ableCoursesCBByDay(ArrayList<ICourse> impossibleCourses, int invokingDayNumber) {
 		schedule.ableCoursesCBByDay(impossibleCourses, invokingDayNumber);
-		
+
 	}
+
 	@Override
-	public IHour getButtonInvoke(){
+	public IHour getButtonInvoke() {
 		return (IHour) this.buttonInvoke;
 	}
 
 	@Override
 	public void deactiveCollorButton(ScheduleButton button) {
 		schedule.deactiveCollorButton(button);
-		
+
 	}
 
 	@Override
 	public void disableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
 		schedule.disableCoursesCBByHour(impossibleCourses);
-		
+
 	}
 
 	@Override
 	public void ableCoursesCBByHour(ArrayList<ICourse> impossibleCourses) {
 		schedule.ableCoursesCBByHour(impossibleCourses);
-		
+
 	}
 
 }

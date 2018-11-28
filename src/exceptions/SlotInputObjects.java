@@ -4,28 +4,28 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 public class SlotInputObjects {
-	private ComboBox dayComboBox;
-	private ComboBox startTimeComboBox;
-	private ComboBox finishTimeComboBox;
+	private ComboBox<?> dayComboBox;
+	private ComboBox<?> startTimeComboBox;
+	private ComboBox<?> finishTimeComboBox;
 	private TextField roomNumber;
 	private TextField lecturerName;
 	
-	public ComboBox getDayComboBox() {
+	public ComboBox<?> getDayComboBox() {
 		return dayComboBox;
 	}
-	public void setDayComboBox(ComboBox dayComboBox) {
+	public void setDayComboBox(ComboBox<?> dayComboBox) {
 		this.dayComboBox = dayComboBox;
 	}
-	public ComboBox getStartTimeComboBox() {
+	public ComboBox<?> getStartTimeComboBox() {
 		return startTimeComboBox;
 	}
-	public void setStartTimeComboBox(ComboBox startTimeComboBox) {
+	public void setStartTimeComboBox(ComboBox<?> startTimeComboBox) {
 		this.startTimeComboBox = startTimeComboBox;
 	}
-	public ComboBox getFinishTimeComboBox() {
+	public ComboBox<?> getFinishTimeComboBox() {
 		return finishTimeComboBox;
 	}
-	public void setFinishTimeComboBox(ComboBox finishTimeComboBox) {
+	public void setFinishTimeComboBox(ComboBox<?> finishTimeComboBox) {
 		this.finishTimeComboBox = finishTimeComboBox;
 	}
 	public TextField getRoomNumber() {

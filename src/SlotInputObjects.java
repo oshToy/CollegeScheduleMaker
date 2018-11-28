@@ -1,5 +1,3 @@
-
-
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
