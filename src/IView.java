@@ -1,4 +1,9 @@
+
+import com.sun.javafx.scene.paint.GradientUtils.Point;
+
 import java.util.ArrayList;
+import java.util.Collection;
+
 import javafx.scene.Node;
 
 public interface IView {

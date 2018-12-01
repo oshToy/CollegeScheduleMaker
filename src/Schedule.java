@@ -1,3 +1,5 @@
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +9,7 @@ public class Schedule implements IDay {
 
 	private Map  <Integer,Course> courseOfSchedule;
 	public Schedule(){
-		courseOfSchedule=new HashMap<>();
+		courseOfSchedule=new HashMap();
 	}
 	public void addCourseToSchedule(Course wantedCourse,int showCode) {
 				if(timeValidSlots(wantedCourse,showCode)==true){

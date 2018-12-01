@@ -1,4 +1,6 @@
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,10 +20,10 @@ public class Model implements IModel {
 	private AllCourses allCourses = new AllCourses();
 	private Schedule schedule = new Schedule();
 	private ArrayList<Course> impossibleCoursesByCourseTiming = new ArrayList<>();
-	private HashMap<Integer, Course> impossibleCoursesByUserTiming = new HashMap<>();
-	private HashSet<Integer> blockedDays = new HashSet<>();// nedd to by finals by
+	private HashMap<Integer, Course> impossibleCoursesByUserTiming = new HashMap();
+	private HashSet<Integer> blockedDays = new HashSet();// nedd to by finals by
 															// number of days
-	private HashMap<Integer, HashSet<Integer>> blockedHours = new HashMap<>();// HashMap <days,HashSet<hours>>
+	private HashMap<Integer,HashSet<Integer>> blockedHours=new HashMap();//HashMap <days,HashSet<hours>>
 	// TODO FOR TESTING ONLY!!!
 
 	@Override
@@ -284,7 +286,7 @@ public class Model implements IModel {
 
 	@Override
 	public ArrayList<ICourse> getImpossibleCourses() {// union of two array list
-		Map<Integer, Course> impossibleCoursesNew = new HashMap<>();
+		Map<Integer, Course> impossibleCoursesNew = new HashMap();
 		for (Course iCourse : impossibleCoursesByCourseTiming) {
 			impossibleCoursesNew.put(iCourse.getCourseCode(), iCourse);
 		}
@@ -304,7 +306,9 @@ public class Model implements IModel {
 			ret.add(iCourse);
 		}
 		// System.out.println("schedule");
-		
+		for (ICourse iCourse : schedule.getCourseOfSchedule().values()) {
+			// System.out.println(iCourse);
+		}
 		// System.out.println();
 		// System.out.println(impossibleCoursesByCourseTiming);
 		// System.out.println();
@@ -315,8 +319,8 @@ public class Model implements IModel {
 	@Override
 	public void addPossibleShowsByDay(int invokingDayNumber) {
 		blockedDays.remove(invokingDayNumber);
-		HashMap<Course, HashSet<Integer>> map = new HashMap<>();// craete map of imposiible course ,
-		// for not changing length of arraylist while runing over it
+		HashMap<Course, HashSet<Integer>> map = new HashMap();//craete map of imposiible course ,
+		//for not changing length of arraylist while runing over it 
 		for (Course course : impossibleCoursesByUserTiming.values()) {
 			for (Show show : course.getShows().values()) {
 				for (Slot iSlot : show.getSlots()) {
@@ -329,12 +333,13 @@ public class Model implements IModel {
 							int slotblockDay = IDay.intByDay(iSlotblock.getDay().toString());
 							if (blockedDays.contains(slotblockDay)) {
 								flag = true;
-							} else if (blockedHours.get(slotblockDay) != null) {
-								HashSet<Integer> set = blockedHours.get(slotblockDay);
+							}
+							else if(blockedHours.get(slotblockDay)!=null){
+								HashSet<Integer> set=blockedHours.get(slotblockDay);
 								int slotBeginingHour = iSlotblock.getStartingTime();
 								int slotEndiningHour = iSlotblock.getEndingTime();
 								for (Integer integer : set) {
-									if ((slotBeginingHour <= integer && slotEndiningHour > integer)) {
+									if((slotBeginingHour <= integer && slotEndiningHour > integer)){
 										flag = true;
 										break;
 									}
@@ -397,7 +402,7 @@ public class Model implements IModel {
 		}
 
 		impossibleCourses();
-		if (blockedHours.get(dayNumber) == null) {
+		if (blockedHours.get(dayNumber)==null) {
 			blockedHours.put(dayNumber, new HashSet<Integer>());
 		}
 		blockedHours.get(dayNumber).add(beginingHour);
@@ -411,37 +416,38 @@ public class Model implements IModel {
 		int dayNumber = IDay.intByDay(buttonInvoke.getDay().toString());
 		int beginingHour = buttonInvoke.getBeginingHour();
 		System.out.println(blockedHours);
-		if (blockedHours.get(dayNumber) != null) {// if hour become active where day was blocked
-			blockedHours.get(dayNumber).remove(beginingHour);// deleting blocked hours
-			if (blockedHours.get(dayNumber).size() == 0) {// deleting blocked day if there are not any blocking hours
-				blockedHours.remove(dayNumber);
-			}
+		if(blockedHours.get(dayNumber)!=null){//if hour become active where day was blocked
+		blockedHours.get(dayNumber).remove(beginingHour);//deleting blocked hours
+		if (blockedHours.get(dayNumber).size()==0) {//deleting blocked day if there are not any blocking hours
+			blockedHours.remove(dayNumber);
 		}
-		HashMap<Course, HashSet<Integer>> map = new HashMap();// craete map of imposiible course ,
-		// for not changing length of arraylist while runing over it
-		int possibleCourseID = -1;
-		int possibleShowID = -1;
+		}
+		HashMap<Course, HashSet<Integer>> map = new HashMap();//craete map of imposiible course ,
+		//for not changing length of arraylist while runing over it 
+		int  possibleCourseID=-1;
+		int  possibleShowID=-1;
 		for (Course course : impossibleCoursesByUserTiming.values()) {
 			for (Show show : course.getShows().values()) {
 				for (Slot iSlot : show.getSlots()) {
 					int slotDay = IDay.intByDay(iSlot.getDay().toString());
 					int slotBeginingHour = iSlot.getStartingTime();
 					int slotEndiningHour = iSlot.getEndingTime();
-					if (dayNumber == slotDay && (slotBeginingHour <= beginingHour && slotEndiningHour > beginingHour)) {
+					if (dayNumber == slotDay&&(slotBeginingHour <= beginingHour && slotEndiningHour > beginingHour)) {
 						boolean flag = false;
 						// check if course blocking by another day before
 						// removing
 						for (Slot iSlotblock : show.getSlots()) {
-
+							
 							int slotblockDay = IDay.intByDay(iSlotblock.getDay().toString());
 							if (blockedDays.contains(slotblockDay)) {
 								flag = true;
-							} else if (blockedHours.get(slotblockDay) != null) {
-								HashSet<Integer> set = blockedHours.get(slotblockDay);
+							}
+							else if(blockedHours.get(slotblockDay)!=null){
+								HashSet<Integer> set=blockedHours.get(slotblockDay);
 								int islotBeginingHour = iSlotblock.getStartingTime();
 								int islotEndiningHour = iSlotblock.getEndingTime();
 								for (Integer integer : set) {
-									if ((islotBeginingHour <= integer && islotEndiningHour > integer)) {
+									if((islotBeginingHour <= integer && islotEndiningHour > integer)){
 										flag = true;
 										break;
 									}
@@ -472,6 +478,7 @@ public class Model implements IModel {
 		impossibleCourses();
 
 		invokeListeners(Controller.SCHEDULE_BUTTON_ACTIVE_MODEL);
+
 
 	}
 

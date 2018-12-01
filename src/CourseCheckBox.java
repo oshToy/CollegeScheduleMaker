@@ -1,8 +1,10 @@
 import java.util.HashSet;
+import java.util.Set;
 
 import javafx.scene.control.CheckBox;
 
 public class CourseCheckBox extends CheckBox implements ICourse{
+	private int showCode;
 	private int courseCode;
 	private String name;
 	private HashSet <Integer> set;
@@ -11,12 +13,8 @@ public class CourseCheckBox extends CheckBox implements ICourse{
 		super(name);
 		this.name=name;
 		this.courseCode=courseCode;
-		set = new HashSet<Integer>() {/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-		{
+		this.showCode=showCode;
+		set = new HashSet<Integer>() {{
 		    add(showCode);
 		}};
 	}
